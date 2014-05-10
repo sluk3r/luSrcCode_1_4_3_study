@@ -15,21 +15,21 @@ package org.apache.lucene.search;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import java.io.IOException;
 
 /**
- * Unit tests for the ParallelMultiSearcher 
+ * Unit tests for the ParallelMultiSearcher
  */
 public class TestParallelMultiSearcher extends TestMultiSearcher {
 
-	public TestParallelMultiSearcher(String name) {
-		super(name);
-	}
+    public TestParallelMultiSearcher(String name) {
+        super(name);
+    }
 
-	protected MultiSearcher getMultiSearcherInstance(Searcher[] searchers)
-		throws IOException {
-		return new ParallelMultiSearcher(searchers);
-	}
+    protected MultiSearcher getMultiSearcherInstance(Searcher[] searchers)
+            throws IOException {
+        return new ParallelMultiSearcher(searchers);
+    }
 
 }

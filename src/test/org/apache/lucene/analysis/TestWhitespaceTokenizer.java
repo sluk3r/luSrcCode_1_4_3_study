@@ -5,12 +5,10 @@ import junit.framework.TestCase;
 import java.io.IOException;
 import java.io.StringReader;
 
-import static junit.framework.Assert.assertTrue;
-
 /**
  * Created by wangxc on 2014/5/9.
  */
-public class TestWhitespaceTokenizer  extends TestCase {
+public class TestWhitespaceTokenizer extends TestCase {
 
     public void testDefaults() throws IOException {
         String seed = " internationalization  pneumonoultramicroscopicsilicovolcanoconiosis  Taumatawhakatangihangakoauauotamateaturipukakapikimaungahoronukupokaiwhenuakitanatahu ";
@@ -20,10 +18,10 @@ public class TestWhitespaceTokenizer  extends TestCase {
 
         WhitespaceTokenizer whitespaceTokenizer = new WhitespaceTokenizer(reader);
         Token token = null;
-        while( (token = whitespaceTokenizer.next()) != null) {
+        while ((token = whitespaceTokenizer.next()) != null) {
             String termText = token.termText();
             int index = content.indexOf(termText);
-            char targetChar = content.charAt(index + termText.length() +  1);
+            char targetChar = content.charAt(index + termText.length() + 1);
 //            assertNotSame(targetChar, " ");
             assertEquals(targetChar, 32);
             System.out.println("token: " + token.termText());

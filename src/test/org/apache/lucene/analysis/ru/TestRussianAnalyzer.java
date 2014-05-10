@@ -17,21 +17,19 @@ package org.apache.lucene.analysis.ru;
  */
 
 import junit.framework.TestCase;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.TokenStream;
 
 import java.io.*;
-
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Token;
 
 /**
  * Test case for RussianAnalyzer.
  *
- * @author    Boris Okner
- * @version   $Id: TestRussianAnalyzer.java,v 1.6 2004/03/29 22:48:06 cutting Exp $
+ * @author Boris Okner
+ * @version $Id: TestRussianAnalyzer.java,v 1.6 2004/03/29 22:48:06 cutting Exp $
  */
 
-public class TestRussianAnalyzer extends TestCase
-{
+public class TestRussianAnalyzer extends TestCase {
     private InputStreamReader inWords;
 
     private InputStreamReader sampleUnicode;
@@ -46,55 +44,50 @@ public class TestRussianAnalyzer extends TestCase
 
     private File dataDir;
 
-    protected void setUp() throws Exception
-    {
-      dataDir = new File(System.getProperty("dataDir"));
+    protected void setUp() throws Exception {
+        dataDir = new File(System.getProperty("dataDir"));
     }
 
-    public void testUnicode() throws IOException
-    {
+    public void testUnicode() throws IOException {
         RussianAnalyzer ra = new RussianAnalyzer(RussianCharsets.UnicodeRussian);
         inWords =
-            new InputStreamReader(
-                new FileInputStream(new File(dataDir, "/org/apache/lucene/analysis/ru/testUnicode.txt")),
-                "Unicode");
+                new InputStreamReader(
+                        new FileInputStream(new File(dataDir, "/org/apache/lucene/analysis/ru/testUnicode.txt")),
+                        "Unicode");
 
         sampleUnicode =
-            new InputStreamReader(
-                new FileInputStream(new File(dataDir, "/org/apache/lucene/analysis/ru/resUnicode.htm")),
-                "Unicode");
+                new InputStreamReader(
+                        new FileInputStream(new File(dataDir, "/org/apache/lucene/analysis/ru/resUnicode.htm")),
+                        "Unicode");
 
         TokenStream in = ra.tokenStream("all", inWords);
 
         RussianLetterTokenizer sample =
-            new RussianLetterTokenizer(
-                sampleUnicode,
-                RussianCharsets.UnicodeRussian);
+                new RussianLetterTokenizer(
+                        sampleUnicode,
+                        RussianCharsets.UnicodeRussian);
 
-        for (;;)
-        {
+        for (; ; ) {
             Token token = in.next();
 
-            if (token == null)
-            {
+            if (token == null) {
                 break;
             }
 
             Token sampleToken = sample.next();
             assertEquals(
-                "Unicode",
-                token.termText(),
-                sampleToken == null
-                ? null
-                : sampleToken.termText());
+                    "Unicode",
+                    token.termText(),
+                    sampleToken == null
+                            ? null
+                            : sampleToken.termText());
         }
 
         inWords.close();
         sampleUnicode.close();
     }
 
-    public void testKOI8() throws IOException
-    {
+    public void testKOI8() throws IOException {
         //System.out.println(new java.util.Date());
         RussianAnalyzer ra = new RussianAnalyzer(RussianCharsets.KOI8);
         // KOI8
@@ -104,26 +97,24 @@ public class TestRussianAnalyzer extends TestCase
 
         TokenStream in = ra.tokenStream("all", inWordsKOI8);
         RussianLetterTokenizer sample =
-            new RussianLetterTokenizer(
-                sampleKOI8,
-                RussianCharsets.KOI8);
+                new RussianLetterTokenizer(
+                        sampleKOI8,
+                        RussianCharsets.KOI8);
 
-        for (;;)
-        {
+        for (; ; ) {
             Token token = in.next();
 
-            if (token == null)
-            {
+            if (token == null) {
                 break;
             }
 
             Token sampleToken = sample.next();
             assertEquals(
-                "KOI8",
-                token.termText(),
-                sampleToken == null
-                ? null
-                : sampleToken.termText());
+                    "KOI8",
+                    token.termText(),
+                    sampleToken == null
+                            ? null
+                            : sampleToken.termText());
 
         }
 
@@ -131,8 +122,7 @@ public class TestRussianAnalyzer extends TestCase
         sampleKOI8.close();
     }
 
-    public void test1251() throws IOException
-    {
+    public void test1251() throws IOException {
         // 1251
         inWords1251 = new InputStreamReader(new FileInputStream(new File(dataDir, "/org/apache/lucene/analysis/ru/test1251.txt")), "iso-8859-1");
 
@@ -141,26 +131,24 @@ public class TestRussianAnalyzer extends TestCase
         RussianAnalyzer ra = new RussianAnalyzer(RussianCharsets.CP1251);
         TokenStream in = ra.tokenStream("", inWords1251);
         RussianLetterTokenizer sample =
-            new RussianLetterTokenizer(
-                sample1251,
-                RussianCharsets.CP1251);
+                new RussianLetterTokenizer(
+                        sample1251,
+                        RussianCharsets.CP1251);
 
-        for (;;)
-        {
+        for (; ; ) {
             Token token = in.next();
 
-            if (token == null)
-            {
+            if (token == null) {
                 break;
             }
 
             Token sampleToken = sample.next();
             assertEquals(
-                "1251",
-                token.termText(),
-                sampleToken == null
-                ? null
-                : sampleToken.termText());
+                    "1251",
+                    token.termText(),
+                    sampleToken == null
+                            ? null
+                            : sampleToken.termText());
 
         }
 

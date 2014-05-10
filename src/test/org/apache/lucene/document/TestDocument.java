@@ -1,18 +1,11 @@
 package org.apache.lucene.document;
 
 import junit.framework.TestCase;
-
-import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.*;
+import org.apache.lucene.store.RAMDirectory;
 
 import java.io.IOException;
 
@@ -38,39 +31,37 @@ import java.io.IOException;
  * @author Otis Gospodnetic
  * @version $Id: TestDocument.java,v 1.4 2004/04/20 17:26:16 goller Exp $
  */
-public class TestDocument extends TestCase
-{
+public class TestDocument extends TestCase {
 
-  /**
-   * Tests {@link Document#remove()} method for a brand new Document
-   * that has not been indexed yet.
-   *
-   * @throws Exception on error
-   */
-  public void testRemoveForNewDocument() throws Exception
-  {
-    Document doc = makeDocumentWithFields();
-    assertEquals(8, doc.fields.size());
-    doc.removeFields("keyword");
-    assertEquals(6, doc.fields.size());
-    doc.removeFields("doesnotexists");      // removing non-existing fields is siltenlty ignored
-    doc.removeFields("keyword");		// removing a field more than once
-    assertEquals(6, doc.fields.size());
-    doc.removeField("text");
-    assertEquals(5, doc.fields.size());
-    doc.removeField("text");
-    assertEquals(4, doc.fields.size());
-    doc.removeField("text");
-    assertEquals(4, doc.fields.size());
-    doc.removeField("doesnotexists");       // removing non-existing fields is siltenlty ignored
-    assertEquals(4, doc.fields.size());
-    doc.removeFields("unindexed");
-    assertEquals(2, doc.fields.size());
-    doc.removeFields("unstored");
-    assertEquals(0, doc.fields.size());
-    doc.removeFields("doesnotexists");	// removing non-existing fields is siltenlty ignored
-    assertEquals(0, doc.fields.size());
-  }
+    /**
+     * Tests {@link Document#remove()} method for a brand new Document
+     * that has not been indexed yet.
+     *
+     * @throws Exception on error
+     */
+    public void testRemoveForNewDocument() throws Exception {
+        Document doc = makeDocumentWithFields();
+        assertEquals(8, doc.fields.size());
+        doc.removeFields("keyword");
+        assertEquals(6, doc.fields.size());
+        doc.removeFields("doesnotexists");      // removing non-existing fields is siltenlty ignored
+        doc.removeFields("keyword");        // removing a field more than once
+        assertEquals(6, doc.fields.size());
+        doc.removeField("text");
+        assertEquals(5, doc.fields.size());
+        doc.removeField("text");
+        assertEquals(4, doc.fields.size());
+        doc.removeField("text");
+        assertEquals(4, doc.fields.size());
+        doc.removeField("doesnotexists");       // removing non-existing fields is siltenlty ignored
+        assertEquals(4, doc.fields.size());
+        doc.removeFields("unindexed");
+        assertEquals(2, doc.fields.size());
+        doc.removeFields("unstored");
+        assertEquals(0, doc.fields.size());
+        doc.removeFields("doesnotexists");    // removing non-existing fields is siltenlty ignored
+        assertEquals(0, doc.fields.size());
+    }
 
     /**
      * Tests {@link Document#getValues()} method for a brand new Document
@@ -78,8 +69,7 @@ public class TestDocument extends TestCase
      *
      * @throws Exception on error
      */
-    public void testGetValuesForNewDocument() throws Exception
-    {
+    public void testGetValuesForNewDocument() throws Exception {
         doAssert(makeDocumentWithFields(), false);
     }
 
@@ -89,8 +79,7 @@ public class TestDocument extends TestCase
      *
      * @throws Exception on error
      */
-    public void testGetValuesForIndexedDocument() throws Exception
-    {
+    public void testGetValuesForIndexedDocument() throws Exception {
         RAMDirectory dir = new RAMDirectory();
         IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
         writer.addDocument(makeDocumentWithFields());
@@ -98,57 +87,49 @@ public class TestDocument extends TestCase
 
         Searcher searcher = new IndexSearcher(dir);
 
-	// search for something that does exists
-	Query query = new TermQuery(new Term("keyword", "test1"));
+        // search for something that does exists
+        Query query = new TermQuery(new Term("keyword", "test1"));
 
-	// ensure that queries return expected results without DateFilter first
+        // ensure that queries return expected results without DateFilter first
         Hits hits = searcher.search(query);
-	assertEquals(1, hits.length());
+        assertEquals(1, hits.length());
 
-        try
-        {
+        try {
             doAssert(hits.doc(0), true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.err);
             System.err.print("\n");
-        }
-        finally
-        {
+        } finally {
             searcher.close();
         }
     }
 
-    private Document makeDocumentWithFields() throws IOException
-    {
+    private Document makeDocumentWithFields() throws IOException {
         Document doc = new Document();
-        doc.add(Field.Keyword(  "keyword",   "test1"));
-        doc.add(Field.Keyword(  "keyword",   "test2"));
-        doc.add(Field.Text(     "text",      "test1"));
-        doc.add(Field.Text(     "text",      "test2"));
+        doc.add(Field.Keyword("keyword", "test1"));
+        doc.add(Field.Keyword("keyword", "test2"));
+        doc.add(Field.Text("text", "test1"));
+        doc.add(Field.Text("text", "test2"));
         doc.add(Field.UnIndexed("unindexed", "test1"));
         doc.add(Field.UnIndexed("unindexed", "test2"));
-        doc.add(Field.UnStored( "unstored",  "test1"));
-        doc.add(Field.UnStored( "unstored",  "test2"));
+        doc.add(Field.UnStored("unstored", "test1"));
+        doc.add(Field.UnStored("unstored", "test2"));
         return doc;
     }
 
-    private void doAssert(Document doc, boolean fromIndex)
-    {
-        String[] keywordFieldValues   = doc.getValues("keyword");
-        String[] textFieldValues      = doc.getValues("text");
+    private void doAssert(Document doc, boolean fromIndex) {
+        String[] keywordFieldValues = doc.getValues("keyword");
+        String[] textFieldValues = doc.getValues("text");
         String[] unindexedFieldValues = doc.getValues("unindexed");
-        String[] unstoredFieldValues  = doc.getValues("unstored");
+        String[] unstoredFieldValues = doc.getValues("unstored");
 
-        assertTrue(keywordFieldValues.length   == 2);
-        assertTrue(textFieldValues.length      == 2);
+        assertTrue(keywordFieldValues.length == 2);
+        assertTrue(textFieldValues.length == 2);
         assertTrue(unindexedFieldValues.length == 2);
         // this test cannot work for documents retrieved from the index
         // since unstored fields will obviously not be returned
-        if (! fromIndex)
-        {
-            assertTrue(unstoredFieldValues.length  == 2);
+        if (!fromIndex) {
+            assertTrue(unstoredFieldValues.length == 2);
         }
 
         assertTrue(keywordFieldValues[0].equals("test1"));
@@ -159,8 +140,7 @@ public class TestDocument extends TestCase
         assertTrue(unindexedFieldValues[1].equals("test2"));
         // this test cannot work for documents retrieved from the index
         // since unstored fields will obviously not be returned
-        if (! fromIndex)
-        {
+        if (!fromIndex) {
             assertTrue(unstoredFieldValues[0].equals("test1"));
             assertTrue(unstoredFieldValues[1].equals("test2"));
         }

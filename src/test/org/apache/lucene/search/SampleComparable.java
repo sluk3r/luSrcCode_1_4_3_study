@@ -46,98 +46,98 @@ import java.io.Serializable;
  * @since 1.4
  */
 public class SampleComparable
-implements Comparable, Serializable {
+        implements Comparable, Serializable {
 
-  String string_part;
-  Integer int_part;
+    String string_part;
+    Integer int_part;
 
-  public SampleComparable (String s) {
-    int i = s.indexOf ("-");
-    string_part = s.substring (0, i);
-    int_part = new Integer (s.substring (i + 1));
-  }
+    public SampleComparable(String s) {
+        int i = s.indexOf("-");
+        string_part = s.substring(0, i);
+        int_part = new Integer(s.substring(i + 1));
+    }
 
-  public int compareTo (Object o) {
-    SampleComparable otherid = (SampleComparable) o;
-    int i = string_part.compareTo (otherid.string_part);
-    if (i == 0) return int_part.compareTo (otherid.int_part);
-    return i;
-  }
+    public int compareTo(Object o) {
+        SampleComparable otherid = (SampleComparable) o;
+        int i = string_part.compareTo(otherid.string_part);
+        if (i == 0) return int_part.compareTo(otherid.int_part);
+        return i;
+    }
 
-  public static SortComparatorSource getComparatorSource () {
-    return new SortComparatorSource () {
-      public ScoreDocComparator newComparator (final IndexReader reader, String fieldname)
-      throws IOException {
-        final String field = fieldname.intern ();
-        final TermEnum enumerator = reader.terms (new Term (fieldname, ""));
-        try {
-          return new ScoreDocComparator () {
-            protected Comparable[] cachedValues = fillCache (reader, enumerator, field);
+    public static SortComparatorSource getComparatorSource() {
+        return new SortComparatorSource() {
+            public ScoreDocComparator newComparator(final IndexReader reader, String fieldname)
+                    throws IOException {
+                final String field = fieldname.intern();
+                final TermEnum enumerator = reader.terms(new Term(fieldname, ""));
+                try {
+                    return new ScoreDocComparator() {
+                        protected Comparable[] cachedValues = fillCache(reader, enumerator, field);
 
-            public int compare (ScoreDoc i, ScoreDoc j) {
-              return cachedValues[i.doc].compareTo (cachedValues[j.doc]);
+                        public int compare(ScoreDoc i, ScoreDoc j) {
+                            return cachedValues[i.doc].compareTo(cachedValues[j.doc]);
+                        }
+
+                        public Comparable sortValue(ScoreDoc i) {
+                            return cachedValues[i.doc];
+                        }
+
+                        public int sortType() {
+                            return SortField.CUSTOM;
+                        }
+                    };
+                } finally {
+                    enumerator.close();
+                }
             }
 
-            public Comparable sortValue (ScoreDoc i) {
-              return cachedValues[i.doc];
+            /**
+             * Returns an array of objects which represent that natural order
+             * of the term values in the given field.
+             *
+             * @param reader     Terms are in this index.
+             * @param enumerator Use this to get the term values and TermDocs.
+             * @param fieldname  Comparables should be for this field.
+             * @return Array of objects representing natural order of terms in field.
+             * @throws IOException If an error occurs reading the index.
+             */
+            protected Comparable[] fillCache(IndexReader reader, TermEnum enumerator, String fieldname)
+                    throws IOException {
+                final String field = fieldname.intern();
+                Comparable[] retArray = new Comparable[reader.maxDoc()];
+                if (retArray.length > 0) {
+                    TermDocs termDocs = reader.termDocs();
+                    try {
+                        if (enumerator.term() == null) {
+                            throw new RuntimeException("no terms in field " + field);
+                        }
+                        do {
+                            Term term = enumerator.term();
+                            if (term.field() != field) break;
+                            Comparable termval = getComparable(term.text());
+                            termDocs.seek(enumerator);
+                            while (termDocs.next()) {
+                                retArray[termDocs.doc()] = termval;
+                            }
+                        } while (enumerator.next());
+                    } finally {
+                        termDocs.close();
+                    }
+                }
+                return retArray;
             }
 
-            public int sortType () {
-              return SortField.CUSTOM;
+            Comparable getComparable(String termtext) {
+                return new SampleComparable(termtext);
             }
-          };
-        } finally {
-          enumerator.close ();
-        }
-      }
+        };
+    }
 
-      /**
-       * Returns an array of objects which represent that natural order
-       * of the term values in the given field.
-       *
-       * @param reader     Terms are in this index.
-       * @param enumerator Use this to get the term values and TermDocs.
-       * @param fieldname  Comparables should be for this field.
-       * @return Array of objects representing natural order of terms in field.
-       * @throws IOException If an error occurs reading the index.
-       */
-      protected Comparable[] fillCache (IndexReader reader, TermEnum enumerator, String fieldname)
-      throws IOException {
-        final String field = fieldname.intern ();
-        Comparable[] retArray = new Comparable[reader.maxDoc ()];
-        if (retArray.length > 0) {
-          TermDocs termDocs = reader.termDocs ();
-          try {
-            if (enumerator.term () == null) {
-              throw new RuntimeException ("no terms in field " + field);
+    public static SortComparator getComparator() {
+        return new SortComparator() {
+            protected Comparable getComparable(String termtext) {
+                return new SampleComparable(termtext);
             }
-            do {
-              Term term = enumerator.term ();
-              if (term.field () != field) break;
-              Comparable termval = getComparable (term.text ());
-              termDocs.seek (enumerator);
-              while (termDocs.next ()) {
-                retArray[termDocs.doc ()] = termval;
-              }
-            } while (enumerator.next ());
-          } finally {
-            termDocs.close ();
-          }
-        }
-        return retArray;
-      }
-
-      Comparable getComparable (String termtext) {
-        return new SampleComparable (termtext);
-      }
-    };
-  }
-
-  public static SortComparator getComparator() {
-    return new SortComparator() {
-      protected Comparable getComparable (String termtext) {
-        return new SampleComparable (termtext);
-      }
-    };
-  }
+        };
+    }
 }

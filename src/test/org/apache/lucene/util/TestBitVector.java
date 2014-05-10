@@ -26,14 +26,14 @@ import org.apache.lucene.store.RAMDirectory;
  * @author "Peter Mularien" <pmularien@deploy.com>
  * @version $Id: TestBitVector.java,v 1.3 2004/03/29 22:48:07 cutting Exp $
  */
-public class TestBitVector extends TestCase
-{
+public class TestBitVector extends TestCase {
     public TestBitVector(String s) {
         super(s);
     }
 
     /**
      * Test the default constructor on BitVectors of various sizes.
+     *
      * @throws Exception
      */
     public void testConstructSize() throws Exception {
@@ -45,11 +45,12 @@ public class TestBitVector extends TestCase
 
     private void doTestConstructOfSize(int n) {
         BitVector bv = new BitVector(n);
-        assertEquals(n,bv.size());
+        assertEquals(n, bv.size());
     }
 
     /**
      * Test the get() and set() methods on BitVectors of various sizes.
+     *
      * @throws Exception
      */
     public void testGetSet() throws Exception {
@@ -61,7 +62,7 @@ public class TestBitVector extends TestCase
 
     private void doTestGetSetVectorOfSize(int n) {
         BitVector bv = new BitVector(n);
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             // ensure a set bit can be git'
             assertFalse(bv.get(i));
             bv.set(i);
@@ -71,6 +72,7 @@ public class TestBitVector extends TestCase
 
     /**
      * Test the clear() method on BitVectors of various sizes.
+     *
      * @throws Exception
      */
     public void testClear() throws Exception {
@@ -82,7 +84,7 @@ public class TestBitVector extends TestCase
 
     private void doTestClearVectorOfSize(int n) {
         BitVector bv = new BitVector(n);
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             // ensure a set bit is cleared
             assertFalse(bv.get(i));
             bv.set(i);
@@ -94,6 +96,7 @@ public class TestBitVector extends TestCase
 
     /**
      * Test the count() method on BitVectors of various sizes.
+     *
      * @throws Exception
      */
     public void testCount() throws Exception {
@@ -106,30 +109,31 @@ public class TestBitVector extends TestCase
     private void doTestCountVectorOfSize(int n) {
         BitVector bv = new BitVector(n);
         // test count when incrementally setting bits
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             assertFalse(bv.get(i));
-            assertEquals(i,bv.count());
+            assertEquals(i, bv.count());
             bv.set(i);
             assertTrue(bv.get(i));
-            assertEquals(i+1,bv.count());
+            assertEquals(i + 1, bv.count());
         }
 
         bv = new BitVector(n);
         // test count when setting then clearing bits
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             assertFalse(bv.get(i));
-            assertEquals(0,bv.count());
+            assertEquals(0, bv.count());
             bv.set(i);
             assertTrue(bv.get(i));
-            assertEquals(1,bv.count());
+            assertEquals(1, bv.count());
             bv.clear(i);
             assertFalse(bv.get(i));
-            assertEquals(0,bv.count());
+            assertEquals(0, bv.count());
         }
     }
 
     /**
      * Test writing and construction to/from Directory.
+     *
      * @throws Exception
      */
     public void testWriteRead() throws Exception {
@@ -140,34 +144,35 @@ public class TestBitVector extends TestCase
     }
 
     private void doTestWriteRead(int n) throws Exception {
-        Directory d = new  RAMDirectory();
+        Directory d = new RAMDirectory();
 
         BitVector bv = new BitVector(n);
         // test count when incrementally setting bits
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             assertFalse(bv.get(i));
-            assertEquals(i,bv.count());
+            assertEquals(i, bv.count());
             bv.set(i);
             assertTrue(bv.get(i));
-            assertEquals(i+1,bv.count());
+            assertEquals(i + 1, bv.count());
             bv.write(d, "TESTBV");
             BitVector compare = new BitVector(d, "TESTBV");
             // compare bit vectors with bits set incrementally
-            assertTrue(doCompare(bv,compare));
+            assertTrue(doCompare(bv, compare));
         }
     }
 
     /**
      * Compare two BitVectors.
      * This should really be an equals method on the BitVector itself.
-     * @param bv One bit vector
+     *
+     * @param bv      One bit vector
      * @param compare The second to compare
      */
     private boolean doCompare(BitVector bv, BitVector compare) {
         boolean equal = true;
-        for(int i=0;i<bv.size();i++) {
+        for (int i = 0; i < bv.size(); i++) {
             // bits must be equal
-            if(bv.get(i)!=compare.get(i)) {
+            if (bv.get(i) != compare.get(i)) {
                 equal = false;
                 break;
             }

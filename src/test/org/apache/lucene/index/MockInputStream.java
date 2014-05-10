@@ -35,13 +35,13 @@ public class MockInputStream extends InputStream {
         int start = pointer;
         while (remainder != 0) {
 //          int bufferNumber = start / buffer.length;
-          int bufferOffset = start % buffer.length;
-          int bytesInBuffer = buffer.length - bufferOffset;
-          int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
-          System.arraycopy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
-          destOffset += bytesToCopy;
-          start += bytesToCopy;
-          remainder -= bytesToCopy;
+            int bufferOffset = start % buffer.length;
+            int bytesInBuffer = buffer.length - bufferOffset;
+            int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
+            System.arraycopy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
+            destOffset += bytesToCopy;
+            start += bytesToCopy;
+            remainder -= bytesToCopy;
         }
         pointer += len;
     }

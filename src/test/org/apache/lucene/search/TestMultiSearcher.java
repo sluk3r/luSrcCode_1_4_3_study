@@ -16,6 +16,7 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import junit.framework.TestCase;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,11 +24,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-
-import junit.framework.TestCase;
 
 import java.io.IOException;
 
@@ -36,24 +34,21 @@ import java.io.IOException;
  *
  * @version $Id: TestMultiSearcher.java,v 1.6 2004/03/02 13:09:57 otis Exp $
  */
-public class TestMultiSearcher extends TestCase
-{
-    public TestMultiSearcher(String name)
-    {
+public class TestMultiSearcher extends TestCase {
+    public TestMultiSearcher(String name) {
         super(name);
     }
 
-	/**
-	 * ReturnS a new instance of the concrete MultiSearcher class
-	 * used in this test.
-	 */
-	protected MultiSearcher getMultiSearcherInstance(Searcher[] searchers) throws IOException {
-		return new MultiSearcher(searchers);
-	}
+    /**
+     * ReturnS a new instance of the concrete MultiSearcher class
+     * used in this test.
+     */
+    protected MultiSearcher getMultiSearcherInstance(Searcher[] searchers) throws IOException {
+        return new MultiSearcher(searchers);
+    }
 
     public void testEmptyIndex()
-        throws Exception
-    {
+            throws Exception {
         // creating two directories for indices
         Directory indexStoreA = new RAMDirectory();
         Directory indexStoreB = new RAMDirectory();
@@ -115,12 +110,10 @@ public class TestMultiSearcher extends TestCase
             for (int i = 0; i < hits.length(); i++) {
                 Document d = hits.doc(i);
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
+        } catch (ArrayIndexOutOfBoundsException e) {
             fail("ArrayIndexOutOfBoundsException thrown: " + e.getMessage());
             e.printStackTrace();
-        } finally{
+        } finally {
             mSearcher.close();
         }
 
@@ -153,12 +146,10 @@ public class TestMultiSearcher extends TestCase
                 // no exception should happen at this point
                 Document d = hits2.doc(i);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
             e.printStackTrace();
-        } finally{
+        } finally {
             mSearcher2.close();
         }
 
@@ -194,12 +185,10 @@ public class TestMultiSearcher extends TestCase
             for (int i = 0; i < hits3.length(); i++) {
                 Document d = hits3.doc(i);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             fail("IOException thrown: " + e.getMessage());
             e.printStackTrace();
-        } finally{
+        } finally {
             mSearcher3.close();
         }
     }

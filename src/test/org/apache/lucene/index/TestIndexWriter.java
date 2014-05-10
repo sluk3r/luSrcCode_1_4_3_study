@@ -1,26 +1,21 @@
 package org.apache.lucene.index;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
-
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+
+import java.io.IOException;
 
 
 /**
  * @author goller
  * @version $Id: TestIndexWriter.java,v 1.3 2003/10/13 14:31:38 otis Exp $
  */
-public class TestIndexWriter extends TestCase
-{
-    public void testDocCount()
-    {
+public class TestIndexWriter extends TestCase {
+    public void testDocCount() {
         Directory dir = new RAMDirectory();
 
         IndexWriter writer = null;
@@ -28,7 +23,7 @@ public class TestIndexWriter extends TestCase
         int i;
 
         try {
-            writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 
             // add 100 documents
             for (i = 0; i < 100; i++) {
@@ -65,21 +60,18 @@ public class TestIndexWriter extends TestCase
             assertEquals(60, reader.maxDoc());
             assertEquals(60, reader.numDocs());
             reader.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void addDoc(IndexWriter writer)
-    {
+    private void addDoc(IndexWriter writer) {
         Document doc = new Document();
         doc.add(Field.UnStored("content", "aaa"));
 
         try {
             writer.addDocument(doc);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

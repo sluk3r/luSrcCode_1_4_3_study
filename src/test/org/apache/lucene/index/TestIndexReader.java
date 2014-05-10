@@ -20,24 +20,24 @@ package org.apache.lucene.index;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
 
-import java.util.Collection;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
 
-public class TestIndexReader extends TestCase
-{
-    /** Main for running test case by itself. */
+public class TestIndexReader extends TestCase {
+    /**
+     * Main for running test case by itself.
+     */
     public static void main(String args[]) {
-        TestRunner.run (new TestSuite(TestIndexReader.class));
+        TestRunner.run(new TestSuite(TestIndexReader.class));
 //        TestRunner.run (new TestIndexReader("testBasicDelete"));
 //        TestRunner.run (new TestIndexReader("testDeleteReaderWriterConflict"));
 //        TestRunner.run (new TestIndexReader("testDeleteReaderReaderConflict"));
@@ -51,10 +51,10 @@ public class TestIndexReader extends TestCase
 
     /**
      * Tests the IndexReader.getFieldNames implementation
+     *
      * @throws Exception on error
      */
-    public void testGetFieldNames() throws Exception
-    {
+    public void testGetFieldNames() throws Exception {
         RAMDirectory d = new RAMDirectory();
         // set up writer
         IndexWriter writer = new IndexWriter(d, new StandardAnalyzer(), true);
@@ -70,13 +70,11 @@ public class TestIndexReader extends TestCase
         // add more documents
         writer = new IndexWriter(d, new StandardAnalyzer(), false);
         // want to get some more segments here
-        for (int i = 0; i < 5*writer.mergeFactor; i++)
-        {
+        for (int i = 0; i < 5 * writer.mergeFactor; i++) {
             addDocumentWithFields(writer);
         }
         // new fields are in some different segments (we hope)
-        for (int i = 0; i < 5*writer.mergeFactor; i++)
-        {
+        for (int i = 0; i < 5 * writer.mergeFactor; i++) {
             addDocumentWithDifferentFields(writer);
         }
         writer.close();
@@ -115,30 +113,30 @@ public class TestIndexReader extends TestCase
                                      IndexReader reader,
                                      Term term,
                                      int expected)
-    throws IOException
-    {
+            throws IOException {
         TermDocs tdocs = null;
 
         try {
             tdocs = reader.termDocs(term);
             assertNotNull(msg + ", null TermDocs", tdocs);
             int count = 0;
-            while(tdocs.next()) {
+            while (tdocs.next()) {
                 count++;
             }
             assertEquals(msg + ", count mismatch", expected, count);
 
         } finally {
             if (tdocs != null)
-                try { tdocs.close(); } catch (Exception e) { }
+                try {
+                    tdocs.close();
+                } catch (Exception e) {
+                }
         }
 
     }
 
 
-
-    public void testBasicDelete() throws IOException
-    {
+    public void testBasicDelete() throws IOException {
         Directory dir = new RAMDirectory();
 
         IndexWriter writer = null;
@@ -146,9 +144,8 @@ public class TestIndexReader extends TestCase
         Term searchTerm = new Term("content", "aaa");
 
         //  add 100 documents with term : aaa
-        writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-        for (int i = 0; i < 100; i++)
-        {
+        writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+        for (int i = 0; i < 100; i++) {
             addDoc(writer, searchTerm.text());
         }
         writer.close();
@@ -176,16 +173,15 @@ public class TestIndexReader extends TestCase
     }
 
 
-    public void testDeleteReaderWriterConflictUnoptimized() throws IOException{
-      deleteReaderWriterConflict(false);
+    public void testDeleteReaderWriterConflictUnoptimized() throws IOException {
+        deleteReaderWriterConflict(false);
     }
-    
-    public void testDeleteReaderWriterConflictOptimized() throws IOException{
+
+    public void testDeleteReaderWriterConflictOptimized() throws IOException {
         deleteReaderWriterConflict(true);
     }
 
-    private void deleteReaderWriterConflict(boolean optimize) throws IOException
-    {
+    private void deleteReaderWriterConflict(boolean optimize) throws IOException {
         //Directory dir = new RAMDirectory();
         Directory dir = getDirectory(true);
 
@@ -193,9 +189,8 @@ public class TestIndexReader extends TestCase
         Term searchTerm2 = new Term("content", "bbb");
 
         //  add 100 documents with term : aaa
-        IndexWriter writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-        for (int i = 0; i < 100; i++)
-        {
+        IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+        for (int i = 0; i < 100; i++) {
             addDoc(writer, searchTerm.text());
         }
         writer.close();
@@ -209,9 +204,8 @@ public class TestIndexReader extends TestCase
         assertTermDocsCount("first reader", reader, searchTerm2, 0);
 
         // add 100 documents with term : bbb
-        writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
-        for (int i = 0; i < 100; i++)
-        {
+        writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+        for (int i = 0; i < 100; i++) {
             addDoc(writer, searchTerm2.text());
         }
 
@@ -220,8 +214,8 @@ public class TestIndexReader extends TestCase
         // searchers. Because of this, deletions made via a previously open
         // reader, which would be applied to that reader's segment, are lost
         // for subsequent searchers/readers
-        if(optimize)
-          writer.optimize();
+        if (optimize)
+            writer.optimize();
         writer.close();
 
         // The reader should not see the new data
@@ -267,15 +261,14 @@ public class TestIndexReader extends TestCase
         reader.close();
     }
 
-  private Directory getDirectory(boolean create) throws IOException {
-    return FSDirectory.getDirectory(new File(System.getProperty("tempDir"), "testIndex"), create);
-  }
+    private Directory getDirectory(boolean create) throws IOException {
+        return FSDirectory.getDirectory(new File(System.getProperty("tempDir"), "testIndex"), create);
+    }
 
-  public void testFilesOpenClose() throws IOException
-    {
+    public void testFilesOpenClose() throws IOException {
         // Create initial data set
         Directory dir = getDirectory(true);
-        IndexWriter writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+        IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
         addDoc(writer, "test");
         writer.close();
         dir.close();
@@ -284,7 +277,7 @@ public class TestIndexReader extends TestCase
         dir = getDirectory(true);
 
         // Now create the data set again, just as before
-        writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+        writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
         addDoc(writer, "test");
         writer.close();
         dir.close();
@@ -299,16 +292,15 @@ public class TestIndexReader extends TestCase
         dir = getDirectory(true);
     }
 
-    public void testDeleteReaderReaderConflictUnoptimized() throws IOException{
-      deleteReaderReaderConflict(false);
+    public void testDeleteReaderReaderConflictUnoptimized() throws IOException {
+        deleteReaderReaderConflict(false);
     }
-    
-    public void testDeleteReaderReaderConflictOptimized() throws IOException{
-      deleteReaderReaderConflict(true);
+
+    public void testDeleteReaderReaderConflictOptimized() throws IOException {
+        deleteReaderReaderConflict(true);
     }
-    
-    private void deleteReaderReaderConflict(boolean optimize) throws IOException
-    {
+
+    private void deleteReaderReaderConflict(boolean optimize) throws IOException {
         Directory dir = getDirectory(true);
 
         Term searchTerm1 = new Term("content", "aaa");
@@ -318,15 +310,14 @@ public class TestIndexReader extends TestCase
         //  add 100 documents with term : aaa
         //  add 100 documents with term : bbb
         //  add 100 documents with term : ccc
-        IndexWriter writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-        for (int i = 0; i < 100; i++)
-        {
+        IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+        for (int i = 0; i < 100; i++) {
             addDoc(writer, searchTerm1.text());
             addDoc(writer, searchTerm2.text());
             addDoc(writer, searchTerm3.text());
         }
-        if(optimize)
-          writer.optimize();
+        if (optimize)
+            writer.optimize();
         writer.close();
 
         // OPEN TWO READERS
@@ -411,37 +402,31 @@ public class TestIndexReader extends TestCase
     }
 
 
-    private void addDocumentWithFields(IndexWriter writer) throws IOException
-    {
+    private void addDocumentWithFields(IndexWriter writer) throws IOException {
         Document doc = new Document();
-        doc.add(Field.Keyword("keyword","test1"));
-        doc.add(Field.Text("text","test1"));
-        doc.add(Field.UnIndexed("unindexed","test1"));
-        doc.add(Field.UnStored("unstored","test1"));
+        doc.add(Field.Keyword("keyword", "test1"));
+        doc.add(Field.Text("text", "test1"));
+        doc.add(Field.UnIndexed("unindexed", "test1"));
+        doc.add(Field.UnStored("unstored", "test1"));
         writer.addDocument(doc);
     }
 
-    private void addDocumentWithDifferentFields(IndexWriter writer) throws IOException
-    {
+    private void addDocumentWithDifferentFields(IndexWriter writer) throws IOException {
         Document doc = new Document();
-        doc.add(Field.Keyword("keyword2","test1"));
-        doc.add(Field.Text("text2","test1"));
-        doc.add(Field.UnIndexed("unindexed2","test1"));
-        doc.add(Field.UnStored("unstored2","test1"));
+        doc.add(Field.Keyword("keyword2", "test1"));
+        doc.add(Field.Text("text2", "test1"));
+        doc.add(Field.UnIndexed("unindexed2", "test1"));
+        doc.add(Field.UnStored("unstored2", "test1"));
         writer.addDocument(doc);
     }
 
-    private void addDoc(IndexWriter writer, String value)
-    {
+    private void addDoc(IndexWriter writer, String value) {
         Document doc = new Document();
         doc.add(Field.UnStored("content", value));
 
-        try
-        {
+        try {
             writer.addDocument(doc);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

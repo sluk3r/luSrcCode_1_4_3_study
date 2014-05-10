@@ -16,17 +16,15 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermEnum;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.RAMDirectory;
+import junit.framework.TestCase;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-
-import junit.framework.TestCase;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.store.RAMDirectory;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -38,10 +36,8 @@ import java.util.LinkedList;
  * @version $Id: TestPhrasePrefixQuery.java,v 1.3 2004/03/29 22:48:06 cutting Exp $
  */
 public class TestPhrasePrefixQuery
-    extends TestCase
-{
-    public TestPhrasePrefixQuery(String name)
-    {
+        extends TestCase {
+    public TestPhrasePrefixQuery(String name) {
         super(name);
     }
 
@@ -49,8 +45,7 @@ public class TestPhrasePrefixQuery
      *
      */
     public void testPhrasePrefix()
-        throws IOException
-    {
+            throws IOException {
         RAMDirectory indexStore = new RAMDirectory();
         IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
         Document doc1 = new Document();
@@ -85,14 +80,13 @@ public class TestPhrasePrefixQuery
         String prefix = "pi";
         TermEnum te = ir.terms(new Term("body", prefix + "*"));
         do {
-            if (te.term().text().startsWith(prefix))
-            {
+            if (te.term().text().startsWith(prefix)) {
                 termsWithPrefix.add(te.term());
             }
         } while (te.next());
 
-        query1.add((Term[])termsWithPrefix.toArray(new Term[0]));
-        query2.add((Term[])termsWithPrefix.toArray(new Term[0]));
+        query1.add((Term[]) termsWithPrefix.toArray(new Term[0]));
+        query2.add((Term[]) termsWithPrefix.toArray(new Term[0]));
 
         Hits result;
         result = searcher.search(query1);

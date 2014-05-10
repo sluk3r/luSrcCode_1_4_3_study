@@ -16,29 +16,25 @@ package org.apache.lucene.index;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.io.File;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import org.apache.lucene.store.OutputStream;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.InputStream;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.store._TestHelper;
+import org.apache.lucene.store.*;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**
  * @author dmitrys@earthlink.net
  * @version $Id: TestCompoundFile.java,v 1.5 2004/03/29 22:48:06 cutting Exp $
  */
-public class TestCompoundFile extends TestCase
-{
-    /** Main for running test case by itself. */
+public class TestCompoundFile extends TestCase {
+    /**
+     * Main for running test case by itself.
+     */
     public static void main(String args[]) {
-        TestRunner.run (new TestSuite(TestCompoundFile.class));
+        TestRunner.run(new TestSuite(TestCompoundFile.class));
 //        TestRunner.run (new TestCompoundFile("testSingleFile"));
 //        TestRunner.run (new TestCompoundFile("testTwoFiles"));
 //        TestRunner.run (new TestCompoundFile("testRandomFiles"));
@@ -63,32 +59,33 @@ public class TestCompoundFile extends TestCase
     }
 
 
-    /** Creates a file of the specified size with random data. */
+    /**
+     * Creates a file of the specified size with random data.
+     */
     private void createRandomFile(Directory dir, String name, int size)
-    throws IOException
-    {
+            throws IOException {
         OutputStream os = dir.createFile(name);
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             byte b = (byte) (Math.random() * 256);
             os.writeByte(b);
         }
         os.close();
     }
 
-    /** Creates a file of the specified size with sequential data. The first
-     *  byte is written as the start byte provided. All subsequent bytes are
-     *  computed as start + offset where offset is the number of the byte.
+    /**
+     * Creates a file of the specified size with sequential data. The first
+     * byte is written as the start byte provided. All subsequent bytes are
+     * computed as start + offset where offset is the number of the byte.
      */
     private void createSequenceFile(Directory dir,
                                     String name,
                                     byte start,
                                     int size)
-    throws IOException
-    {
+            throws IOException {
         OutputStream os = dir.createFile(name);
-        for (int i=0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             os.writeByte(start);
-            start ++;
+            start++;
         }
         os.close();
     }
@@ -97,24 +94,23 @@ public class TestCompoundFile extends TestCase
     private void assertSameStreams(String msg,
                                    InputStream expected,
                                    InputStream test)
-    throws IOException
-    {
+            throws IOException {
         assertNotNull(msg + " null expected", expected);
         assertNotNull(msg + " null test", test);
         assertEquals(msg + " length", expected.length(), test.length());
         assertEquals(msg + " position", expected.getFilePointer(),
-                                        test.getFilePointer());
+                test.getFilePointer());
 
         byte expectedBuffer[] = new byte[512];
         byte testBuffer[] = new byte[expectedBuffer.length];
 
         long remainder = expected.length() - expected.getFilePointer();
-        while(remainder > 0) {
+        while (remainder > 0) {
             int readLen = (int) Math.min(remainder, expectedBuffer.length);
             expected.readBytes(expectedBuffer, 0, readLen);
             test.readBytes(testBuffer, 0, readLen);
             assertEqualArrays(msg + ", remainder " + remainder, expectedBuffer,
-                testBuffer, 0, readLen);
+                    testBuffer, 0, readLen);
             remainder -= readLen;
         }
     }
@@ -124,10 +120,8 @@ public class TestCompoundFile extends TestCase
                                    InputStream expected,
                                    InputStream actual,
                                    long seekTo)
-    throws IOException
-    {
-        if(seekTo >= 0 && seekTo < expected.length())
-        {
+            throws IOException {
+        if (seekTo >= 0 && seekTo < expected.length()) {
             expected.seek(seekTo);
             actual.seek(seekTo);
             assertSameStreams(msg + ", seek(mid)", expected, actual);
@@ -135,12 +129,10 @@ public class TestCompoundFile extends TestCase
     }
 
 
-
     private void assertSameSeekBehavior(String msg,
                                         InputStream expected,
                                         InputStream actual)
-    throws IOException
-    {
+            throws IOException {
         // seek to 0
         long point = 0;
         assertSameStreams(msg + ", seek(0)", expected, actual, point);
@@ -171,12 +163,11 @@ public class TestCompoundFile extends TestCase
                                    byte[] expected,
                                    byte[] test,
                                    int start,
-                                   int len)
-    {
+                                   int len) {
         assertNotNull(msg + " null expected", expected);
         assertNotNull(msg + " null test", test);
 
-        for (int i=start; i<len; i++) {
+        for (int i = start; i < len; i++) {
             assertEquals(msg + " " + i, expected[i], test[i]);
         }
     }
@@ -187,12 +178,13 @@ public class TestCompoundFile extends TestCase
     // ===========================================================
 
 
-    /** This test creates compound file based on a single file.
-     *  Files of different sizes are tested: 0, 1, 10, 100 bytes.
+    /**
+     * This test creates compound file based on a single file.
+     * Files of different sizes are tested: 0, 1, 10, 100 bytes.
      */
     public void testSingleFile() throws IOException {
-        int data[] = new int[] { 0, 1, 10, 100 };
-        for (int i=0; i<data.length; i++) {
+        int data[] = new int[]{0, 1, 10, 100};
+        for (int i = 0; i < data.length; i++) {
             String name = "t" + data[i];
             createSequenceFile(dir, name, (byte) 0, data[i]);
             CompoundFileWriter csw = new CompoundFileWriter(dir, name + ".cfs");
@@ -211,8 +203,8 @@ public class TestCompoundFile extends TestCase
     }
 
 
-    /** This test creates compound file based on two files.
-     *
+    /**
+     * This test creates compound file based on two files.
      */
     public void testTwoFiles() throws IOException {
         createSequenceFile(dir, "d1", (byte) 0, 15);
@@ -240,11 +232,12 @@ public class TestCompoundFile extends TestCase
         csr.close();
     }
 
-    /** This test creates a compound file based on a large number of files of
-     *  various length. The file content is generated randomly. The sizes range
-     *  from 0 to 1Mb. Some of the sizes are selected to test the buffering
-     *  logic in the file reading code. For this the chunk variable is set to
-     *  the length of the buffer used internally by the compound file logic.
+    /**
+     * This test creates a compound file based on a large number of files of
+     * various length. The file content is generated randomly. The sizes range
+     * from 0 to 1Mb. Some of the sizes are selected to test the buffering
+     * logic in the file reading code. For this the chunk variable is set to
+     * the length of the buffer used internally by the compound file logic.
      */
     public void testRandomFiles() throws IOException {
         // Setup the test segment
@@ -269,17 +262,17 @@ public class TestCompoundFile extends TestCase
 
         // Now test
         CompoundFileWriter csw = new CompoundFileWriter(dir, "test.cfs");
-        final String data[] = new String[] {
-            ".zero", ".one", ".ten", ".hundred", ".big1", ".big2", ".big3",
-            ".big4", ".big5", ".big6", ".big7"
+        final String data[] = new String[]{
+                ".zero", ".one", ".ten", ".hundred", ".big1", ".big2", ".big3",
+                ".big4", ".big5", ".big6", ".big7"
         };
-        for (int i=0; i<data.length; i++) {
+        for (int i = 0; i < data.length; i++) {
             csw.addFile(segment + data[i]);
         }
         csw.close();
 
         CompoundFileReader csr = new CompoundFileReader(dir, "test.cfs");
-        for (int i=0; i<data.length; i++) {
+        for (int i = 0; i < data.length; i++) {
             InputStream check = dir.openFile(segment + data[i]);
             InputStream test = csr.openFile(segment + data[i]);
             assertSameStreams(data[i], check, test);
@@ -291,14 +284,15 @@ public class TestCompoundFile extends TestCase
     }
 
 
-    /** Setup a larger compound file with a number of components, each of
-     *  which is a sequential file (so that we can easily tell that we are
-     *  reading in the right byte). The methods sets up 20 files - f0 to f19,
-     *  the size of each file is 1000 bytes.
+    /**
+     * Setup a larger compound file with a number of components, each of
+     * which is a sequential file (so that we can easily tell that we are
+     * reading in the right byte). The methods sets up 20 files - f0 to f19,
+     * the size of each file is 1000 bytes.
      */
     private void setUp_2() throws IOException {
         CompoundFileWriter cw = new CompoundFileWriter(dir, "f.comp");
-        for (int i=0; i<20; i++) {
+        for (int i = 0; i < 20; i++) {
             createSequenceFile(dir, "f" + i, (byte) 0, 2000);
             cw.addFile("f" + i);
         }
@@ -311,11 +305,10 @@ public class TestCompoundFile extends TestCase
     }
 
     private void demo_FSInputStreamBug(FSDirectory fsdir, String file)
-    throws IOException
-    {
+            throws IOException {
         // Setup the test file - we need more than 1024 bytes
         OutputStream os = fsdir.createFile(file);
-        for(int i=0; i<2000; i++) {
+        for (int i = 0; i < 2000; i++) {
             os.writeByte((byte) i);
         }
         os.close();
@@ -351,7 +344,7 @@ public class TestCompoundFile extends TestCase
     static boolean isCSInputStreamOpen(InputStream is) throws IOException {
         if (isCSInputStream(is)) {
             CompoundFileReader.CSInputStream cis =
-            (CompoundFileReader.CSInputStream) is;
+                    (CompoundFileReader.CSInputStream) is;
 
             return _TestHelper.isFSInputStreamOpen(cis.base);
         } else {
@@ -411,8 +404,9 @@ public class TestCompoundFile extends TestCase
     }
 
 
-    /** This test opens two files from a compound stream and verifies that
-     *  their file positions are independent of each other.
+    /**
+     * This test opens two files from a compound stream and verifies that
+     * their file positions are independent of each other.
      */
     public void testRandomAccess() throws IOException {
         setUp_2();
@@ -490,8 +484,9 @@ public class TestCompoundFile extends TestCase
         cr.close();
     }
 
-    /** This test opens two files from a compound stream and verifies that
-     *  their file positions are independent of each other.
+    /**
+     * This test opens two files from a compound stream and verifies that
+     * their file positions are independent of each other.
      */
     public void testRandomAccessClones() throws IOException {
         setUp_2();

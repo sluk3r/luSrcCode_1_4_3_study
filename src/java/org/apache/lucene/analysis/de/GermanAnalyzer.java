@@ -41,95 +41,95 @@ import java.util.Set;
  * @version $Id: GermanAnalyzer.java,v 1.17 2004/07/10 06:19:01 otis Exp $
  */
 public class GermanAnalyzer extends Analyzer {
-  /**
-   * List of typical german stopwords.
-   */
-  private String[] GERMAN_STOP_WORDS = {
-    "einer", "eine", "eines", "einem", "einen",
-    "der", "die", "das", "dass", "daß",
-    "du", "er", "sie", "es",
-    "was", "wer", "wie", "wir",
-    "und", "oder", "ohne", "mit",
-    "am", "im", "in", "aus", "auf",
-    "ist", "sein", "war", "wird",
-    "ihr", "ihre", "ihres",
-    "als", "für", "von", "mit",
-    "dich", "dir", "mich", "mir",
-    "mein", "sein", "kein",
-    "durch", "wegen", "wird"
-  };
+    /**
+     * List of typical german stopwords.
+     */
+    private String[] GERMAN_STOP_WORDS = {
+            "einer", "eine", "eines", "einem", "einen",
+            "der", "die", "das", "dass", "daß",
+            "du", "er", "sie", "es",
+            "was", "wer", "wie", "wir",
+            "und", "oder", "ohne", "mit",
+            "am", "im", "in", "aus", "auf",
+            "ist", "sein", "war", "wird",
+            "ihr", "ihre", "ihres",
+            "als", "für", "von", "mit",
+            "dich", "dir", "mich", "mir",
+            "mein", "sein", "kein",
+            "durch", "wegen", "wird"
+    };
 
-  /**
-   * Contains the stopwords used with the StopFilter.
-   */
-  private Set stopSet = new HashSet();
+    /**
+     * Contains the stopwords used with the StopFilter.
+     */
+    private Set stopSet = new HashSet();
 
-  /**
-   * Contains words that should be indexed but not stemmed.
-   */
-  private Set exclusionSet = new HashSet();
+    /**
+     * Contains words that should be indexed but not stemmed.
+     */
+    private Set exclusionSet = new HashSet();
 
-  /**
-   * Builds an analyzer.
-   */
-  public GermanAnalyzer() {
-    stopSet = StopFilter.makeStopSet(GERMAN_STOP_WORDS);
-  }
+    /**
+     * Builds an analyzer.
+     */
+    public GermanAnalyzer() {
+        stopSet = StopFilter.makeStopSet(GERMAN_STOP_WORDS);
+    }
 
-  /**
-   * Builds an analyzer with the given stop words.
-   */
-  public GermanAnalyzer(String[] stopwords) {
-    stopSet = StopFilter.makeStopSet(stopwords);
-  }
+    /**
+     * Builds an analyzer with the given stop words.
+     */
+    public GermanAnalyzer(String[] stopwords) {
+        stopSet = StopFilter.makeStopSet(stopwords);
+    }
 
-  /**
-   * Builds an analyzer with the given stop words.
-   */
-  public GermanAnalyzer(Hashtable stopwords) {
-    stopSet = new HashSet(stopwords.keySet());
-  }
+    /**
+     * Builds an analyzer with the given stop words.
+     */
+    public GermanAnalyzer(Hashtable stopwords) {
+        stopSet = new HashSet(stopwords.keySet());
+    }
 
-  /**
-   * Builds an analyzer with the given stop words.
-   */
-  public GermanAnalyzer(File stopwords) throws IOException {
-    stopSet = WordlistLoader.getWordSet(stopwords);
-  }
+    /**
+     * Builds an analyzer with the given stop words.
+     */
+    public GermanAnalyzer(File stopwords) throws IOException {
+        stopSet = WordlistLoader.getWordSet(stopwords);
+    }
 
-  /**
-   * Builds an exclusionlist from an array of Strings.
-   */
-  public void setStemExclusionTable(String[] exclusionlist) {
-    exclusionSet = StopFilter.makeStopSet(exclusionlist);
-  }
+    /**
+     * Builds an exclusionlist from an array of Strings.
+     */
+    public void setStemExclusionTable(String[] exclusionlist) {
+        exclusionSet = StopFilter.makeStopSet(exclusionlist);
+    }
 
-  /**
-   * Builds an exclusionlist from a Hashtable.
-   */
-  public void setStemExclusionTable(Hashtable exclusionlist) {
-    exclusionSet = new HashSet(exclusionlist.keySet());
-  }
+    /**
+     * Builds an exclusionlist from a Hashtable.
+     */
+    public void setStemExclusionTable(Hashtable exclusionlist) {
+        exclusionSet = new HashSet(exclusionlist.keySet());
+    }
 
-  /**
-   * Builds an exclusionlist from the words contained in the given file.
-   */
-  public void setStemExclusionTable(File exclusionlist) throws IOException {
-    exclusionSet = WordlistLoader.getWordSet(exclusionlist);
-  }
+    /**
+     * Builds an exclusionlist from the words contained in the given file.
+     */
+    public void setStemExclusionTable(File exclusionlist) throws IOException {
+        exclusionSet = WordlistLoader.getWordSet(exclusionlist);
+    }
 
-  /**
-   * Creates a TokenStream which tokenizes all the text in the provided Reader.
-   *
-   * @return A TokenStream build from a StandardTokenizer filtered with
-   *         StandardFilter, LowerCaseFilter, StopFilter, GermanStemFilter
-   */
-  public TokenStream tokenStream(String fieldName, Reader reader) {
-    TokenStream result = new StandardTokenizer(reader);
-    result = new StandardFilter(result);
-    result = new LowerCaseFilter(result);
-    result = new StopFilter(result, stopSet);
-    result = new GermanStemFilter(result, exclusionSet);
-    return result;
-  }
+    /**
+     * Creates a TokenStream which tokenizes all the text in the provided Reader.
+     *
+     * @return A TokenStream build from a StandardTokenizer filtered with
+     *         StandardFilter, LowerCaseFilter, StopFilter, GermanStemFilter
+     */
+    public TokenStream tokenStream(String fieldName, Reader reader) {
+        TokenStream result = new StandardTokenizer(reader);
+        result = new StandardFilter(result);
+        result = new LowerCaseFilter(result);
+        result = new StopFilter(result, stopSet);
+        result = new GermanStemFilter(result, exclusionSet);
+        return result;
+    }
 }

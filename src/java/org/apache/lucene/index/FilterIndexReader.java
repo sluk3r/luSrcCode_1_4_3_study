@@ -16,12 +16,13 @@ package org.apache.lucene.index;
  * limitations under the License.
  */
 
+import org.apache.lucene.document.Document;
+
 import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.lucene.document.Document;
-
-/**  A <code>FilterIndexReader</code> contains another IndexReader, which it
+/**
+ * A <code>FilterIndexReader</code> contains another IndexReader, which it
  * uses as its basic source of data, possibly transforming the data along the
  * way or providing additional functionality. The class
  * <code>FilterIndexReader</code> itself simply implements all abstract methods
@@ -32,118 +33,198 @@ import org.apache.lucene.document.Document;
  */
 public class FilterIndexReader extends IndexReader {
 
-  /** Base class for filtering {@link TermDocs} implementations. */
-  public static class FilterTermDocs implements TermDocs {
-    protected TermDocs in;
+    /**
+     * Base class for filtering {@link TermDocs} implementations.
+     */
+    public static class FilterTermDocs implements TermDocs {
+        protected TermDocs in;
 
-    public FilterTermDocs(TermDocs in) { this.in = in; }
+        public FilterTermDocs(TermDocs in) {
+            this.in = in;
+        }
 
-    public void seek(Term term) throws IOException { in.seek(term); }
-    public void seek(TermEnum termEnum) throws IOException { in.seek(termEnum); }
-    public int doc() { return in.doc(); }
-    public int freq() { return in.freq(); }
-    public boolean next() throws IOException { return in.next(); }
-    public int read(int[] docs, int[] freqs) throws IOException {
-      return in.read(docs, freqs);
+        public void seek(Term term) throws IOException {
+            in.seek(term);
+        }
+
+        public void seek(TermEnum termEnum) throws IOException {
+            in.seek(termEnum);
+        }
+
+        public int doc() {
+            return in.doc();
+        }
+
+        public int freq() {
+            return in.freq();
+        }
+
+        public boolean next() throws IOException {
+            return in.next();
+        }
+
+        public int read(int[] docs, int[] freqs) throws IOException {
+            return in.read(docs, freqs);
+        }
+
+        public boolean skipTo(int i) throws IOException {
+            return in.skipTo(i);
+        }
+
+        public void close() throws IOException {
+            in.close();
+        }
     }
-    public boolean skipTo(int i) throws IOException { return in.skipTo(i); }
-    public void close() throws IOException { in.close(); }
-  }
 
-  /** Base class for filtering {@link TermPositions} implementations. */
-  public static class FilterTermPositions
-          extends FilterTermDocs implements TermPositions {
+    /**
+     * Base class for filtering {@link TermPositions} implementations.
+     */
+    public static class FilterTermPositions
+            extends FilterTermDocs implements TermPositions {
 
-    public FilterTermPositions(TermPositions in) { super(in); }
+        public FilterTermPositions(TermPositions in) {
+            super(in);
+        }
 
-    public int nextPosition() throws IOException {
-      return ((TermPositions) this.in).nextPosition();
+        public int nextPosition() throws IOException {
+            return ((TermPositions) this.in).nextPosition();
+        }
     }
-  }
 
-  /** Base class for filtering {@link TermEnum} implementations. */
-  public static class FilterTermEnum extends TermEnum {
-    protected TermEnum in;
+    /**
+     * Base class for filtering {@link TermEnum} implementations.
+     */
+    public static class FilterTermEnum extends TermEnum {
+        protected TermEnum in;
 
-    public FilterTermEnum(TermEnum in) { this.in = in; }
+        public FilterTermEnum(TermEnum in) {
+            this.in = in;
+        }
 
-    public boolean next() throws IOException { return in.next(); }
-    public Term term() { return in.term(); }
-    public int docFreq() { return in.docFreq(); }
-    public void close() throws IOException { in.close(); }
-  }
+        public boolean next() throws IOException {
+            return in.next();
+        }
 
-  protected IndexReader in;
+        public Term term() {
+            return in.term();
+        }
 
-  /**
-   * <p>Construct a FilterIndexReader based on the specified base reader.
-   * Directory locking for delete, undeleteAll, and setNorm operations is
-   * left to the base reader.</p>
-   * <p>Note that base reader is closed if this FilterIndexReader is closed.</p>
-   * @param in specified base reader.
-   */
-  public FilterIndexReader(IndexReader in) {
-    super(in.directory());
-    this.in = in;
-  }
+        public int docFreq() {
+            return in.docFreq();
+        }
 
-  public TermFreqVector[] getTermFreqVectors(int docNumber)
-          throws IOException {
-    return in.getTermFreqVectors(docNumber);
-  }
+        public void close() throws IOException {
+            in.close();
+        }
+    }
 
-  public TermFreqVector getTermFreqVector(int docNumber, String field)
-          throws IOException {
-    return in.getTermFreqVector(docNumber, field);
-  }
+    protected IndexReader in;
 
-  public int numDocs() { return in.numDocs(); }
-  public int maxDoc() { return in.maxDoc(); }
+    /**
+     * <p>Construct a FilterIndexReader based on the specified base reader.
+     * Directory locking for delete, undeleteAll, and setNorm operations is
+     * left to the base reader.</p>
+     * <p>Note that base reader is closed if this FilterIndexReader is closed.</p>
+     *
+     * @param in specified base reader.
+     */
+    public FilterIndexReader(IndexReader in) {
+        super(in.directory());
+        this.in = in;
+    }
 
-  public Document document(int n) throws IOException { return in.document(n); }
+    public TermFreqVector[] getTermFreqVectors(int docNumber)
+            throws IOException {
+        return in.getTermFreqVectors(docNumber);
+    }
 
-  public boolean isDeleted(int n) { return in.isDeleted(n); }
-  public boolean hasDeletions() { return in.hasDeletions(); }
-  protected void doUndeleteAll() throws IOException { in.undeleteAll(); }
+    public TermFreqVector getTermFreqVector(int docNumber, String field)
+            throws IOException {
+        return in.getTermFreqVector(docNumber, field);
+    }
 
-  public byte[] norms(String f) throws IOException { return in.norms(f); }
-  public void norms(String f, byte[] bytes, int offset) throws IOException {
-    in.norms(f, bytes, offset);
-  }
-  protected void doSetNorm(int d, String f, byte b) throws IOException {
-    in.setNorm(d, f, b);
-  }
+    public int numDocs() {
+        return in.numDocs();
+    }
 
-  public TermEnum terms() throws IOException { return in.terms(); }
-  public TermEnum terms(Term t) throws IOException { return in.terms(t); }
+    public int maxDoc() {
+        return in.maxDoc();
+    }
 
-  public int docFreq(Term t) throws IOException { return in.docFreq(t); }
+    public Document document(int n) throws IOException {
+        return in.document(n);
+    }
 
-  public TermDocs termDocs() throws IOException { return in.termDocs(); }
+    public boolean isDeleted(int n) {
+        return in.isDeleted(n);
+    }
 
-  public TermPositions termPositions() throws IOException {
-    return in.termPositions();
-  }
+    public boolean hasDeletions() {
+        return in.hasDeletions();
+    }
 
-  protected void doDelete(int n) throws IOException { in.delete(n); }
-  protected void doCommit() throws IOException { in.commit(); }
-  protected void doClose() throws IOException { in.close(); }
+    protected void doUndeleteAll() throws IOException {
+        in.undeleteAll();
+    }
 
-  public Collection getFieldNames() throws IOException {
-    return in.getFieldNames();
-  }
+    public byte[] norms(String f) throws IOException {
+        return in.norms(f);
+    }
 
-  public Collection getFieldNames(boolean indexed) throws IOException {
-    return in.getFieldNames(indexed);
-  }
+    public void norms(String f, byte[] bytes, int offset) throws IOException {
+        in.norms(f, bytes, offset);
+    }
 
-  /**
-   * 
-   * @param storedTermVector if true, returns only Indexed fields that have term vector info, 
-   *                        else only indexed fields without term vector info 
-   * @return Collection of Strings indicating the names of the fields
-   */
-  public Collection getIndexedFieldNames(boolean storedTermVector) {
-    return in.getIndexedFieldNames(storedTermVector);
-  }
+    protected void doSetNorm(int d, String f, byte b) throws IOException {
+        in.setNorm(d, f, b);
+    }
+
+    public TermEnum terms() throws IOException {
+        return in.terms();
+    }
+
+    public TermEnum terms(Term t) throws IOException {
+        return in.terms(t);
+    }
+
+    public int docFreq(Term t) throws IOException {
+        return in.docFreq(t);
+    }
+
+    public TermDocs termDocs() throws IOException {
+        return in.termDocs();
+    }
+
+    public TermPositions termPositions() throws IOException {
+        return in.termPositions();
+    }
+
+    protected void doDelete(int n) throws IOException {
+        in.delete(n);
+    }
+
+    protected void doCommit() throws IOException {
+        in.commit();
+    }
+
+    protected void doClose() throws IOException {
+        in.close();
+    }
+
+    public Collection getFieldNames() throws IOException {
+        return in.getFieldNames();
+    }
+
+    public Collection getFieldNames(boolean indexed) throws IOException {
+        return in.getFieldNames(indexed);
+    }
+
+    /**
+     * @param storedTermVector if true, returns only Indexed fields that have term vector info,
+     *                         else only indexed fields without term vector info
+     * @return Collection of Strings indicating the names of the fields
+     */
+    public Collection getIndexedFieldNames(boolean storedTermVector) {
+        return in.getIndexedFieldNames(storedTermVector);
+    }
 }

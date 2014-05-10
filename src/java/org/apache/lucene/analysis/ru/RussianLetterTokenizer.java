@@ -16,8 +16,9 @@ package org.apache.lucene.analysis.ru;
  * limitations under the License.
  */
 
-import java.io.Reader;
 import org.apache.lucene.analysis.CharTokenizer;
+
+import java.io.Reader;
 
 /**
  * A RussianLetterTokenizer is a tokenizer that extends LetterTokenizer by additionally looking up letters
@@ -25,17 +26,17 @@ import org.apache.lucene.analysis.CharTokenizer;
  * which doesn't know how to detect letters in encodings like CP1252 and KOI8
  * (well-known problems with 0xD7 and 0xF7 chars)
  *
- * @author  Boris Okner, b.okner@rogers.com
+ * @author Boris Okner, b.okner@rogers.com
  * @version $Id: RussianLetterTokenizer.java,v 1.3 2004/03/29 22:48:01 cutting Exp $
  */
 
-public class RussianLetterTokenizer extends CharTokenizer
-{
-    /** Construct a new LetterTokenizer. */
+public class RussianLetterTokenizer extends CharTokenizer {
+    /**
+     * Construct a new LetterTokenizer.
+     */
     private char[] charset;
 
-    public RussianLetterTokenizer(Reader in, char[] charset)
-    {
+    public RussianLetterTokenizer(Reader in, char[] charset) {
         super(in);
         this.charset = charset;
     }
@@ -44,12 +45,10 @@ public class RussianLetterTokenizer extends CharTokenizer
      * Collects only characters which satisfy
      * {@link Character#isLetter(char)}.
      */
-    protected boolean isTokenChar(char c)
-    {
+    protected boolean isTokenChar(char c) {
         if (Character.isLetter(c))
             return true;
-        for (int i = 0; i < charset.length; i++)
-        {
+        for (int i = 0; i < charset.length; i++) {
             if (c == charset[i])
                 return true;
         }

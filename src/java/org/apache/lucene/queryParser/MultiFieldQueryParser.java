@@ -17,10 +17,6 @@ package org.apache.lucene.queryParser;
  */
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.CharStream;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.queryParser.QueryParserTokenManager;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 
@@ -30,31 +26,27 @@ import org.apache.lucene.search.Query;
  * @author <a href="mailto:kelvin@relevanz.com">Kelvin Tan</a>
  * @version $Revision: 1.4 $
  */
-public class MultiFieldQueryParser extends QueryParser
-{
-    public static final int NORMAL_FIELD     = 0;
-    public static final int REQUIRED_FIELD   = 1;
+public class MultiFieldQueryParser extends QueryParser {
+    public static final int NORMAL_FIELD = 0;
+    public static final int REQUIRED_FIELD = 1;
     public static final int PROHIBITED_FIELD = 2;
 
-    public MultiFieldQueryParser(QueryParserTokenManager tm)
-    {
+    public MultiFieldQueryParser(QueryParserTokenManager tm) {
         super(tm);
     }
 
-    public MultiFieldQueryParser(CharStream stream)
-    {
+    public MultiFieldQueryParser(CharStream stream) {
         super(stream);
     }
 
-    public MultiFieldQueryParser(String f, Analyzer a)
-    {
+    public MultiFieldQueryParser(String f, Analyzer a) {
         super(f, a);
     }
 
     /**
-     * <p>
+     * <p/>
      * Parses a query which searches on the fields specified.
-     * <p>
+     * <p/>
      * If x fields are specified, this effectively constructs:
      * <pre>
      * <code>
@@ -62,18 +54,16 @@ public class MultiFieldQueryParser extends QueryParser
      * </code>
      * </pre>
      *
-     * @param query Query string to parse
-     * @param fields Fields to search on
+     * @param query    Query string to parse
+     * @param fields   Fields to search on
      * @param analyzer Analyzer to use
      * @throws ParseException if query parsing fails
-     * @throws TokenMgrError if query parsing fails
+     * @throws TokenMgrError  if query parsing fails
      */
     public static Query parse(String query, String[] fields, Analyzer analyzer)
-	throws ParseException
-    {
+            throws ParseException {
         BooleanQuery bQuery = new BooleanQuery();
-        for (int i = 0; i < fields.length; i++)
-        {
+        for (int i = 0; i < fields.length; i++) {
             Query q = parse(query, fields[i], analyzer);
             bQuery.add(q, false, false);
         }
@@ -81,7 +71,7 @@ public class MultiFieldQueryParser extends QueryParser
     }
 
     /**
-     * <p>
+     * <p/>
      * Parses a query, searching on the fields specified.
      * Use this if you need to specify certain fields as required,
      * and others as prohibited.
@@ -95,7 +85,7 @@ public class MultiFieldQueryParser extends QueryParser
      * parse(query, fields, flags, analyzer);
      * </code>
      * </pre>
-     *<p>
+     * <p/>
      * The code above would construct a query:
      * <pre>
      * <code>
@@ -103,24 +93,21 @@ public class MultiFieldQueryParser extends QueryParser
      * </code>
      * </pre>
      *
-     * @param query Query string to parse
-     * @param fields Fields to search on
-     * @param flags Flags describing the fields
+     * @param query    Query string to parse
+     * @param fields   Fields to search on
+     * @param flags    Flags describing the fields
      * @param analyzer Analyzer to use
      * @throws ParseException if query parsing fails
-     * @throws TokenMgrError if query parsing fails
+     * @throws TokenMgrError  if query parsing fails
      */
     public static Query parse(String query, String[] fields, int[] flags,
-	Analyzer analyzer)
-	throws ParseException
-    {
+                              Analyzer analyzer)
+            throws ParseException {
         BooleanQuery bQuery = new BooleanQuery();
-        for (int i = 0; i < fields.length; i++)
-        {
+        for (int i = 0; i < fields.length; i++) {
             Query q = parse(query, fields[i], analyzer);
             int flag = flags[i];
-            switch (flag)
-            {
+            switch (flag) {
                 case REQUIRED_FIELD:
                     bQuery.add(q, true, false);
                     break;

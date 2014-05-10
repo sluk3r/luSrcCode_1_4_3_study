@@ -21,20 +21,19 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 
 import java.io.Reader;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Analyzer for Russian language. Supports an external list of stopwords (words that
  * will not be indexed at all).
  * A default set of stopwords is used unless an alternative list is specified.
  *
- * @author  Boris Okner, b.okner@rogers.com
+ * @author Boris Okner, b.okner@rogers.com
  * @version $Id: RussianAnalyzer.java,v 1.7 2004/03/29 22:48:01 cutting Exp $
  */
-public final class RussianAnalyzer extends Analyzer
-{
+public final class RussianAnalyzer extends Analyzer {
     // letters
     private static char A = 0;
     private static char B = 1;
@@ -73,107 +72,107 @@ public final class RussianAnalyzer extends Analyzer
      * List of typical Russian stopwords.
      */
     private static char[][] RUSSIAN_STOP_WORDS = {
-        {A},
-        {B, E, Z},
-        {B, O, L, E, E},
-        {B, Y},
-        {B, Y, L},
-        {B, Y, L, A},
-        {B, Y, L, I},
-        {B, Y, L, O},
-        {B, Y, T, SOFT},
-        {V},
-        {V, A, M},
-        {V, A, S},
-        {V, E, S, SOFT},
-        {V, O},
-        {V, O, T},
-        {V, S, E},
-        {V, S, E, G, O},
-        {V, S, E, X},
-        {V, Y},
-        {G, D, E},
-        {D, A},
-        {D, A, ZH, E},
-        {D, L, IA},
-        {D, O},
-        {E, G, O},
-        {E, E},
-        {E, I_,},
-        {E, IU},
-        {E, S, L, I},
-        {E, S, T, SOFT},
-        {E, SHCH, E},
-        {ZH, E},
-        {Z, A},
-        {Z, D, E, S, SOFT},
-        {I},
-        {I, Z},
-        {I, L, I},
-        {I, M},
-        {I, X},
-        {K},
-        {K, A, K},
-        {K, O},
-        {K, O, G, D, A},
-        {K, T, O},
-        {L, I},
-        {L, I, B, O},
-        {M, N, E},
-        {M, O, ZH, E, T},
-        {M, Y},
-        {N, A},
-        {N, A, D, O},
-        {N, A, SH},
-        {N, E},
-        {N, E, G, O},
-        {N, E, E},
-        {N, E, T},
-        {N, I},
-        {N, I, X},
-        {N, O},
-        {N, U},
-        {O},
-        {O, B},
-        {O, D, N, A, K, O},
-        {O, N},
-        {O, N, A},
-        {O, N, I},
-        {O, N, O},
-        {O, T},
-        {O, CH, E, N, SOFT},
-        {P, O},
-        {P, O, D},
-        {P, R, I},
-        {S},
-        {S, O},
-        {T, A, K},
-        {T, A, K, ZH, E},
-        {T, A, K, O, I_},
-        {T, A, M},
-        {T, E},
-        {T, E, M},
-        {T, O},
-        {T, O, G, O},
-        {T, O, ZH, E},
-        {T, O, I_},
-        {T, O, L, SOFT, K, O},
-        {T, O, M},
-        {T, Y},
-        {U},
-        {U, ZH, E},
-        {X, O, T, IA},
-        {CH, E, G, O},
-        {CH, E, I_},
-        {CH, E, M},
-        {CH, T, O},
-        {CH, T, O, B, Y},
-        {CH, SOFT, E},
-        {CH, SOFT, IA},
-        {AE, T, A},
-        {AE, T, I},
-        {AE, T, O},
-        {IA}
+            {A},
+            {B, E, Z},
+            {B, O, L, E, E},
+            {B, Y},
+            {B, Y, L},
+            {B, Y, L, A},
+            {B, Y, L, I},
+            {B, Y, L, O},
+            {B, Y, T, SOFT},
+            {V},
+            {V, A, M},
+            {V, A, S},
+            {V, E, S, SOFT},
+            {V, O},
+            {V, O, T},
+            {V, S, E},
+            {V, S, E, G, O},
+            {V, S, E, X},
+            {V, Y},
+            {G, D, E},
+            {D, A},
+            {D, A, ZH, E},
+            {D, L, IA},
+            {D, O},
+            {E, G, O},
+            {E, E},
+            {E, I_,},
+            {E, IU},
+            {E, S, L, I},
+            {E, S, T, SOFT},
+            {E, SHCH, E},
+            {ZH, E},
+            {Z, A},
+            {Z, D, E, S, SOFT},
+            {I},
+            {I, Z},
+            {I, L, I},
+            {I, M},
+            {I, X},
+            {K},
+            {K, A, K},
+            {K, O},
+            {K, O, G, D, A},
+            {K, T, O},
+            {L, I},
+            {L, I, B, O},
+            {M, N, E},
+            {M, O, ZH, E, T},
+            {M, Y},
+            {N, A},
+            {N, A, D, O},
+            {N, A, SH},
+            {N, E},
+            {N, E, G, O},
+            {N, E, E},
+            {N, E, T},
+            {N, I},
+            {N, I, X},
+            {N, O},
+            {N, U},
+            {O},
+            {O, B},
+            {O, D, N, A, K, O},
+            {O, N},
+            {O, N, A},
+            {O, N, I},
+            {O, N, O},
+            {O, T},
+            {O, CH, E, N, SOFT},
+            {P, O},
+            {P, O, D},
+            {P, R, I},
+            {S},
+            {S, O},
+            {T, A, K},
+            {T, A, K, ZH, E},
+            {T, A, K, O, I_},
+            {T, A, M},
+            {T, E},
+            {T, E, M},
+            {T, O},
+            {T, O, G, O},
+            {T, O, ZH, E},
+            {T, O, I_},
+            {T, O, L, SOFT, K, O},
+            {T, O, M},
+            {T, Y},
+            {U},
+            {U, ZH, E},
+            {X, O, T, IA},
+            {CH, E, G, O},
+            {CH, E, I_},
+            {CH, E, M},
+            {CH, T, O},
+            {CH, T, O, B, Y},
+            {CH, SOFT, E},
+            {CH, SOFT, IA},
+            {AE, T, A},
+            {AE, T, I},
+            {AE, T, O},
+            {IA}
     };
 
     /**
@@ -192,14 +191,13 @@ public final class RussianAnalyzer extends Analyzer
     public RussianAnalyzer() {
         charset = RussianCharsets.UnicodeRussian;
         stopSet = StopFilter.makeStopSet(
-                    makeStopWords(RussianCharsets.UnicodeRussian));
+                makeStopWords(RussianCharsets.UnicodeRussian));
     }
 
     /**
      * Builds an analyzer.
      */
-    public RussianAnalyzer(char[] charset)
-    {
+    public RussianAnalyzer(char[] charset) {
         this.charset = charset;
         stopSet = StopFilter.makeStopSet(makeStopWords(charset));
     }
@@ -207,24 +205,20 @@ public final class RussianAnalyzer extends Analyzer
     /**
      * Builds an analyzer with the given stop words.
      */
-    public RussianAnalyzer(char[] charset, String[] stopwords)
-    {
+    public RussianAnalyzer(char[] charset, String[] stopwords) {
         this.charset = charset;
         stopSet = StopFilter.makeStopSet(stopwords);
     }
 
     // Takes russian stop words and translates them to a String array, using
     // the given charset
-    private static String[] makeStopWords(char[] charset)
-    {
+    private static String[] makeStopWords(char[] charset) {
         String[] res = new String[RUSSIAN_STOP_WORDS.length];
-        for (int i = 0; i < res.length; i++)
-        {
+        for (int i = 0; i < res.length; i++) {
             char[] theStopWord = RUSSIAN_STOP_WORDS[i];
             // translate the word,using the charset
             StringBuffer theWord = new StringBuffer();
-            for (int j = 0; j < theStopWord.length; j++)
-            {
+            for (int j = 0; j < theStopWord.length; j++) {
                 theWord.append(charset[theStopWord[j]]);
             }
             res[i] = theWord.toString();
@@ -234,10 +228,10 @@ public final class RussianAnalyzer extends Analyzer
 
     /**
      * Builds an analyzer with the given stop words.
+     *
      * @todo create a Set version of this ctor
      */
-    public RussianAnalyzer(char[] charset, Hashtable stopwords)
-    {
+    public RussianAnalyzer(char[] charset, Hashtable stopwords) {
         this.charset = charset;
         stopSet = new HashSet(stopwords.keySet());
     }
@@ -245,11 +239,10 @@ public final class RussianAnalyzer extends Analyzer
     /**
      * Creates a TokenStream which tokenizes all the text in the provided Reader.
      *
-     * @return  A TokenStream build from a RussianLetterTokenizer filtered with
-     *                  RussianLowerCaseFilter, StopFilter, and RussianStemFilter
+     * @return A TokenStream build from a RussianLetterTokenizer filtered with
+     *         RussianLowerCaseFilter, StopFilter, and RussianStemFilter
      */
-    public TokenStream tokenStream(String fieldName, Reader reader)
-    {
+    public TokenStream tokenStream(String fieldName, Reader reader) {
         TokenStream result = new RussianLetterTokenizer(reader, charset);
         result = new RussianLowerCaseFilter(result, charset);
         result = new StopFilter(result, stopSet);

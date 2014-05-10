@@ -16,13 +16,13 @@ package org.apache.lucene.index;
  * limitations under the License.
  */
 
-import java.util.Enumeration;
-import java.io.IOException;
-
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.OutputStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.OutputStream;
+
+import java.io.IOException;
+import java.util.Enumeration;
 
 final class FieldsWriter {
     private FieldInfos fieldInfos;

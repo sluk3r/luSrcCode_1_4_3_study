@@ -18,10 +18,11 @@ package org.apache.lucene.index;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.InputStream;
-import org.apache.lucene.store.OutputStream;
 import org.apache.lucene.store.Lock;
-import java.util.HashMap;
+import org.apache.lucene.store.OutputStream;
+
 import java.io.IOException;
+import java.util.HashMap;
 
 
 /**
@@ -52,8 +53,7 @@ class CompoundFileReader extends Directory {
 
 
     public CompoundFileReader(Directory dir, String name)
-    throws IOException
-    {
+            throws IOException {
         directory = dir;
         fileName = name;
 
@@ -65,7 +65,7 @@ class CompoundFileReader extends Directory {
             // read the directory and init files
             int count = stream.readVInt();
             FileEntry entry = null;
-            for (int i=0; i<count; i++) {
+            for (int i = 0; i < count; i++) {
                 long offset = stream.readLong();
                 String id = stream.readString();
 
@@ -87,10 +87,11 @@ class CompoundFileReader extends Directory {
             success = true;
 
         } finally {
-            if (! success && (stream != null)) {
+            if (!success && (stream != null)) {
                 try {
                     stream.close();
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                }
             }
         }
     }
@@ -113,8 +114,7 @@ class CompoundFileReader extends Directory {
     }
 
     public synchronized InputStream openFile(String id)
-    throws IOException
-    {
+            throws IOException {
         if (stream == null)
             throw new IOException("Stream closed");
 
@@ -125,70 +125,84 @@ class CompoundFileReader extends Directory {
         return new CSInputStream(stream, entry.offset, entry.length);
     }
 
-    /** Returns an array of strings, one for each file in the directory. */
+    /**
+     * Returns an array of strings, one for each file in the directory.
+     */
     public String[] list() {
         String res[] = new String[entries.size()];
         return (String[]) entries.keySet().toArray(res);
     }
 
-    /** Returns true iff a file with the given name exists. */
+    /**
+     * Returns true iff a file with the given name exists.
+     */
     public boolean fileExists(String name) {
         return entries.containsKey(name);
     }
 
-    /** Returns the time the named file was last modified. */
+    /**
+     * Returns the time the named file was last modified.
+     */
     public long fileModified(String name) throws IOException {
         return directory.fileModified(fileName);
     }
 
-    /** Set the modified time of an existing file to now. */
+    /**
+     * Set the modified time of an existing file to now.
+     */
     public void touchFile(String name) throws IOException {
         directory.touchFile(fileName);
     }
 
-    /** Removes an existing file in the directory. */
-    public void deleteFile(String name)
-    {
+    /**
+     * Removes an existing file in the directory.
+     */
+    public void deleteFile(String name) {
         throw new UnsupportedOperationException();
     }
 
-    /** Renames an existing file in the directory.
-    If a file already exists with the new name, then it is replaced.
-    This replacement should be atomic. */
-    public void renameFile(String from, String to)
-    {
+    /**
+     * Renames an existing file in the directory.
+     * If a file already exists with the new name, then it is replaced.
+     * This replacement should be atomic.
+     */
+    public void renameFile(String from, String to) {
         throw new UnsupportedOperationException();
     }
 
-    /** Returns the length of a file in the directory. */
+    /**
+     * Returns the length of a file in the directory.
+     */
     public long fileLength(String name)
-    throws IOException
-    {
+            throws IOException {
         FileEntry e = (FileEntry) entries.get(name);
         if (e == null)
             throw new IOException("File " + name + " does not exist");
         return e.length;
     }
 
-    /** Creates a new, empty file in the directory with the given name.
-      Returns a stream writing this file. */
-    public OutputStream createFile(String name)
-    {
+    /**
+     * Creates a new, empty file in the directory with the given name.
+     * Returns a stream writing this file.
+     */
+    public OutputStream createFile(String name) {
         throw new UnsupportedOperationException();
     }
 
-    /** Construct a {@link Lock}.
+    /**
+     * Construct a {@link Lock}.
+     *
      * @param name the name of the lock file
      */
-    public Lock makeLock(String name)
-    {
+    public Lock makeLock(String name) {
         throw new UnsupportedOperationException();
     }
 
-    /** Implementation of an InputStream that reads from a portion of the
-     *  compound file. The visibility is left as "package" *only* because
-     *  this helps with testing since JUnit test cases in a different class
-     *  can then access package fields of this class.
+    /**
+     * Implementation of an InputStream that reads from a portion of the
+     * compound file. The visibility is left as "package" *only* because
+     * this helps with testing since JUnit test cases in a different class
+     * can then access package fields of this class.
      */
     static final class CSInputStream extends InputStream {
 
@@ -196,39 +210,45 @@ class CompoundFileReader extends Directory {
         long fileOffset;
 
         CSInputStream(final InputStream base, final long fileOffset, final long length)
-          throws IOException
-        {
+                throws IOException {
             this.base = base;
             this.fileOffset = fileOffset;
             this.length = length;   // variable in the superclass
         }
 
-        /** Expert: implements buffer refill.  Reads bytes from the current
-         *  position in the input.
-         * @param b the array to read bytes into
+        /**
+         * Expert: implements buffer refill.  Reads bytes from the current
+         * position in the input.
+         *
+         * @param b      the array to read bytes into
          * @param offset the offset in the array to start storing bytes
          * @param length the number of bytes to read
          */
         protected void readInternal(byte[] b, int offset, int len)
-        throws IOException
-        {
+                throws IOException {
             synchronized (base) {
-              long start = getFilePointer();
-              if(start + len > length)
-                throw new IOException("read past EOF");
-              base.seek(fileOffset + start);
-              base.readBytes(b, offset, len);
+                long start = getFilePointer();
+                if (start + len > length)
+                    throw new IOException("read past EOF");
+                base.seek(fileOffset + start);
+                base.readBytes(b, offset, len);
             }
         }
 
-        /** Expert: implements seek.  Sets current position in this file, where
-         *  the next {@link #readInternal(byte[],int,int)} will occur.
-         * @see #readInternal(byte[],int,int)
+        /**
+         * Expert: implements seek.  Sets current position in this file, where
+         * the next {@link #readInternal(byte[], int, int)} will occur.
+         *
+         * @see #readInternal(byte[], int, int)
          */
-        protected void seekInternal(long pos) throws IOException {}
+        protected void seekInternal(long pos) throws IOException {
+        }
 
-        /** Closes the stream to futher operations. */
-        public void close() throws IOException {}
+        /**
+         * Closes the stream to futher operations.
+         */
+        public void close() throws IOException {
+        }
 
     }
 }

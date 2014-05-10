@@ -28,13 +28,13 @@ import java.io.IOException;
  */
 
 public interface TermPositions
-    extends TermDocs
-{
-    /** Returns next position in the current document.  It is an error to call
-	this more than {@link #freq()} times
-	without calling {@link #next()}<p> This is
-	invalid until {@link #next()} is called for
-	the first time.
-    */
+        extends TermDocs {
+    /**
+     * Returns next position in the current document.  It is an error to call
+     * this more than {@link #freq()} times
+     * without calling {@link #next()}<p> This is
+     * invalid until {@link #next()} is called for
+     * the first time.
+     */
     int nextPosition() throws IOException;
 }

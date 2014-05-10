@@ -16,139 +16,144 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import org.apache.lucene.index.TermPositions;
+
 import java.io.IOException;
 
-import org.apache.lucene.index.*;
-
 abstract class PhraseScorer extends Scorer {
-  private Weight weight;
-  protected byte[] norms;
-  protected float value;
+    private Weight weight;
+    protected byte[] norms;
+    protected float value;
 
-  private boolean firstTime = true;
-  private boolean more = true;
-  protected PhraseQueue pq;
-  protected PhrasePositions first, last;
+    private boolean firstTime = true;
+    private boolean more = true;
+    protected PhraseQueue pq;
+    protected PhrasePositions first, last;
 
-  private float freq;
+    private float freq;
 
 
-  PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
-               byte[] norms) {
-    super(similarity);
-    this.norms = norms;
-    this.weight = weight;
-    this.value = weight.getValue();
+    PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
+                 byte[] norms) {
+        super(similarity);
+        this.norms = norms;
+        this.weight = weight;
+        this.value = weight.getValue();
 
-    // convert tps to a list
-    for (int i = 0; i < tps.length; i++) {
-      PhrasePositions pp = new PhrasePositions(tps[i], positions[i]);
-      if (last != null) {			  // add next to end of list
-        last.next = pp;
-      } else
-        first = pp;
-      last = pp;
+        // convert tps to a list
+        for (int i = 0; i < tps.length; i++) {
+            PhrasePositions pp = new PhrasePositions(tps[i], positions[i]);
+            if (last != null) {              // add next to end of list
+                last.next = pp;
+            } else
+                first = pp;
+            last = pp;
+        }
+
+        pq = new PhraseQueue(tps.length);             // construct empty pq
+
     }
 
-    pq = new PhraseQueue(tps.length);             // construct empty pq
-
-  }
-
-  public int doc() { return first.doc; }
-
-  public boolean next() throws IOException {
-    if (firstTime) {
-      init();
-      firstTime = false;
-    } else if (more) {
-      more = last.next();                         // trigger further scanning
+    public int doc() {
+        return first.doc;
     }
-    return doNext();
-  }
-  
-  // next without initial increment
-  private boolean doNext() throws IOException {
-    while (more) {
-      while (more && first.doc < last.doc) {      // find doc w/ all the terms
-        more = first.skipTo(last.doc);            // skip first upto last
-        firstToLast();                            // and move it to the end
-      }
 
-      if (more) {
-        // found a doc with all of the terms
-        freq = phraseFreq();                      // check for phrase
-        if (freq == 0.0f)                         // no match
-          more = last.next();                     // trigger further scanning
-        else
-          return true;                            // found a match
-      }
+    public boolean next() throws IOException {
+        if (firstTime) {
+            init();
+            firstTime = false;
+        } else if (more) {
+            more = last.next();                         // trigger further scanning
+        }
+        return doNext();
     }
-    return false;                                 // no more matches
-  }
 
-  public float score() throws IOException {
-    //System.out.println("scoring " + first.doc);
-    float raw = getSimilarity().tf(freq) * value; // raw score
-    return raw * Similarity.decodeNorm(norms[first.doc]); // normalize
-  }
+    // next without initial increment
+    private boolean doNext() throws IOException {
+        while (more) {
+            while (more && first.doc < last.doc) {      // find doc w/ all the terms
+                more = first.skipTo(last.doc);            // skip first upto last
+                firstToLast();                            // and move it to the end
+            }
 
-  public boolean skipTo(int target) throws IOException {
-    for (PhrasePositions pp = first; more && pp != null; pp = pp.next) {
-      more = pp.skipTo(target);
+            if (more) {
+                // found a doc with all of the terms
+                freq = phraseFreq();                      // check for phrase
+                if (freq == 0.0f)                         // no match
+                    more = last.next();                     // trigger further scanning
+                else
+                    return true;                            // found a match
+            }
+        }
+        return false;                                 // no more matches
     }
-    if (more)
-      sort();                                     // re-sort
-    return doNext();
-  }
 
-  protected abstract float phraseFreq() throws IOException;
-
-  private void init() throws IOException {
-    for (PhrasePositions pp = first; more && pp != null; pp = pp.next) 
-      more = pp.next();
-    if(more)
-      sort();
-  }
-  
-  private void sort() {
-    pq.clear();
-    for (PhrasePositions pp = first; pp != null; pp = pp.next)
-      pq.put(pp);
-    pqToList();
-  }
-
-  protected final void pqToList() {
-    last = first = null;
-    while (pq.top() != null) {
-      PhrasePositions pp = (PhrasePositions) pq.pop();
-      if (last != null) {			  // add next to end of list
-        last.next = pp;
-      } else
-        first = pp;
-      last = pp;
-      pp.next = null;
+    public float score() throws IOException {
+        //System.out.println("scoring " + first.doc);
+        float raw = getSimilarity().tf(freq) * value; // raw score
+        return raw * Similarity.decodeNorm(norms[first.doc]); // normalize
     }
-  }
 
-  protected final void firstToLast() {
-    last.next = first;			  // move first to end of list
-    last = first;
-    first = first.next;
-    last.next = null;
-  }
+    public boolean skipTo(int target) throws IOException {
+        for (PhrasePositions pp = first; more && pp != null; pp = pp.next) {
+            more = pp.skipTo(target);
+        }
+        if (more)
+            sort();                                     // re-sort
+        return doNext();
+    }
 
-  public Explanation explain(final int doc) throws IOException {
-    Explanation tfExplanation = new Explanation();
+    protected abstract float phraseFreq() throws IOException;
 
-    while (next() && doc() < doc) {}
+    private void init() throws IOException {
+        for (PhrasePositions pp = first; more && pp != null; pp = pp.next)
+            more = pp.next();
+        if (more)
+            sort();
+    }
 
-    float phraseFreq = (doc() == doc) ? freq : 0.0f;
-    tfExplanation.setValue(getSimilarity().tf(phraseFreq));
-    tfExplanation.setDescription("tf(phraseFreq=" + phraseFreq + ")");
+    private void sort() {
+        pq.clear();
+        for (PhrasePositions pp = first; pp != null; pp = pp.next)
+            pq.put(pp);
+        pqToList();
+    }
 
-    return tfExplanation;
-  }
+    protected final void pqToList() {
+        last = first = null;
+        while (pq.top() != null) {
+            PhrasePositions pp = (PhrasePositions) pq.pop();
+            if (last != null) {              // add next to end of list
+                last.next = pp;
+            } else
+                first = pp;
+            last = pp;
+            pp.next = null;
+        }
+    }
 
-  public String toString() { return "scorer(" + weight + ")"; }
+    protected final void firstToLast() {
+        last.next = first;              // move first to end of list
+        last = first;
+        first = first.next;
+        last.next = null;
+    }
+
+    public Explanation explain(final int doc) throws IOException {
+        Explanation tfExplanation = new Explanation();
+
+        while (next() && doc() < doc) {
+        }
+
+        float phraseFreq = (doc() == doc) ? freq : 0.0f;
+        tfExplanation.setValue(getSimilarity().tf(phraseFreq));
+        tfExplanation.setDescription("tf(phraseFreq=" + phraseFreq + ")");
+
+        return tfExplanation;
+    }
+
+    public String toString() {
+        return "scorer(" + weight + ")";
+    }
 
 }

@@ -36,7 +36,7 @@ final class SloppyPhraseScorer extends PhraseScorer {
             pp.firstPosition();
             if (pp.position > end)
                 end = pp.position;
-            pq.put(pp);				  // build pq from list
+            pq.put(pp);                  // build pq from list
         }
 
         float freq = 0.0f;
@@ -46,9 +46,9 @@ final class SloppyPhraseScorer extends PhraseScorer {
             int start = pp.position;
             int next = ((PhrasePositions) pq.top()).position;
             for (int pos = start; pos <= next; pos = pp.position) {
-                start = pos;				  // advance pp to min window
+                start = pos;                  // advance pp to min window
                 if (!pp.nextPosition()) {
-                    done = true;				  // ran out of a term -- done
+                    done = true;                  // ran out of a term -- done
                     break;
                 }
             }
@@ -59,7 +59,7 @@ final class SloppyPhraseScorer extends PhraseScorer {
 
             if (pp.position > end)
                 end = pp.position;
-            pq.put(pp);				  // restore pq
+            pq.put(pp);                  // restore pq
         } while (!done);
 
         return freq;

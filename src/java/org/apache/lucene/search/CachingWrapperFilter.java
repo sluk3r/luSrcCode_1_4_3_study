@@ -17,10 +17,11 @@ package org.apache.lucene.search;
  */
 
 import org.apache.lucene.index.IndexReader;
-import java.util.BitSet;
-import java.util.WeakHashMap;
-import java.util.Map;
+
 import java.io.IOException;
+import java.util.BitSet;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Wraps another filters result and caches it.  The caching
@@ -29,43 +30,43 @@ import java.io.IOException;
  * caching, keeping the two concerns decoupled yet composable.
  */
 public class CachingWrapperFilter extends Filter {
-  private Filter filter;
+    private Filter filter;
 
-  /**
-   * @todo What about serialization in RemoteSearchable?  Caching won't work.
-   *       Should transient be removed?
-   */
-  private transient Map cache;
+    /**
+     * @todo What about serialization in RemoteSearchable?  Caching won't work.
+     * Should transient be removed?
+     */
+    private transient Map cache;
 
-  /**
-   * @param filter Filter to cache results of
-   */
-  public CachingWrapperFilter(Filter filter) {
-    this.filter = filter;
-  }
-
-  public BitSet bits(IndexReader reader) throws IOException {
-    if (cache == null) {
-      cache = new WeakHashMap();
+    /**
+     * @param filter Filter to cache results of
+     */
+    public CachingWrapperFilter(Filter filter) {
+        this.filter = filter;
     }
 
-    synchronized (cache) {  // check cache
-      BitSet cached = (BitSet) cache.get(reader);
-      if (cached != null) {
-        return cached;
-      }
+    public BitSet bits(IndexReader reader) throws IOException {
+        if (cache == null) {
+            cache = new WeakHashMap();
+        }
+
+        synchronized (cache) {  // check cache
+            BitSet cached = (BitSet) cache.get(reader);
+            if (cached != null) {
+                return cached;
+            }
+        }
+
+        final BitSet bits = filter.bits(reader);
+
+        synchronized (cache) {  // update cache
+            cache.put(reader, bits);
+        }
+
+        return bits;
     }
 
-    final BitSet bits = filter.bits(reader);
-
-    synchronized (cache) {  // update cache
-      cache.put(reader, bits);
+    public String toString() {
+        return "CachingWrapperFilter(" + filter + ")";
     }
-
-    return bits;
-  }
-
-  public String toString() {
-    return "CachingWrapperFilter("+filter+")";
-  }
 }

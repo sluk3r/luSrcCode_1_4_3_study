@@ -16,12 +16,13 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 
-/** Expert: Calculate query weights and build query scorers.
- *
+import java.io.IOException;
+
+/**
+ * Expert: Calculate query weights and build query scorers.
+ * <p/>
  * <p>A Weight is constructed by a query, given a Searcher ({@link
  * Query#createWeight(Searcher)}).  The {@link #sumOfSquaredWeights()} method
  * is then called on the top-level query to compute the query normalization
@@ -30,21 +31,33 @@ import org.apache.lucene.index.IndexReader;
  * scorer may be constructed by calling {@link #scorer(IndexReader)}.
  */
 public interface Weight extends java.io.Serializable {
-  /** The query that this concerns. */
-  Query getQuery();
+    /**
+     * The query that this concerns.
+     */
+    Query getQuery();
 
-  /** The weight for this query. */
-  float getValue();
+    /**
+     * The weight for this query.
+     */
+    float getValue();
 
-  /** The sum of squared weights of contained query clauses. */
-  float sumOfSquaredWeights() throws IOException;
+    /**
+     * The sum of squared weights of contained query clauses.
+     */
+    float sumOfSquaredWeights() throws IOException;
 
-  /** Assigns the query normalization factor to this. */
-  void normalize(float norm);
+    /**
+     * Assigns the query normalization factor to this.
+     */
+    void normalize(float norm);
 
-  /** Constructs a scorer for this. */
-  Scorer scorer(IndexReader reader) throws IOException;
+    /**
+     * Constructs a scorer for this.
+     */
+    Scorer scorer(IndexReader reader) throws IOException;
 
-  /** An explanation of the score computation for the named document. */
-  Explanation explain(IndexReader reader, int doc) throws IOException;
+    /**
+     * An explanation of the score computation for the named document.
+     */
+    Explanation explain(IndexReader reader, int doc) throws IOException;
 }

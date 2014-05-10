@@ -22,7 +22,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.InputStream;
 import org.apache.lucene.store.OutputStream;
 
-final class SegmentInfos extends Vector {
+final class SegmentInfos extends Vector {           //wangxc 直接让业务类继承自一Util里的类， 很少见。
   
   /** The file format version, a negative number. */
   /* Works since counter, the old 1st entry, is always >= 0 */

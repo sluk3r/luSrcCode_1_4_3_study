@@ -37,7 +37,7 @@ final class FieldInfos {
   private HashMap byName = new HashMap();
 
   FieldInfos() {
-    add("", false);
+    add("", false);                              //wangxc 这个空的什么用？
   }
 
   /**
@@ -114,9 +114,9 @@ final class FieldInfos {
    * @param storeTermVector true if the term vector should be stored
    */
   public void add(String name, boolean isIndexed, boolean storeTermVector) {
-    FieldInfo fi = fieldInfo(name);
+    FieldInfo fi = fieldInfo(name); //wangxc FieldInfo是内部实现时跟Field相关的信息， 感觉少了些。 2014-5-10 13:45:54
     if (fi == null) {
-      addInternal(name, isIndexed, storeTermVector);
+      addInternal(name, isIndexed, storeTermVector); //wangxc 这会怎么转换？
     } else {
       if (fi.isIndexed != isIndexed) {
         fi.isIndexed = true;                      // once indexed, always index
@@ -130,9 +130,9 @@ final class FieldInfos {
   private void addInternal(String name, boolean isIndexed,
                            boolean storeTermVector) {
     FieldInfo fi =
-      new FieldInfo(name, isIndexed, byNumber.size(), storeTermVector);
+      new FieldInfo(name, isIndexed, byNumber.size(), storeTermVector); //wangxc 这个number是ByName里的index？
     byNumber.add(fi);
-    byName.put(name, fi);
+    byName.put(name, fi);    //wangxc 这个FieldInfos是多个Field的集合， 是不是也以代表了Document？
   }
 
   public int fieldNumber(String fieldName) {
@@ -181,7 +181,7 @@ final class FieldInfos {
     output.writeVInt(size());
     for (int i = 0; i < size(); i++) {
       FieldInfo fi = fieldInfo(i);
-      byte bits = 0x0;
+      byte bits = 0x0; //wangxc  人读的程序， 为什么直接用了十六进制？
       if (fi.isIndexed) bits |= 0x1;
       if (fi.storeTermVector) bits |= 0x2;
       output.writeString(fi.name);

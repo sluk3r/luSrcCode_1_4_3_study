@@ -40,7 +40,7 @@ import org.apache.lucene.search.Hits;             // for javadoc
  */
 
 public final class Document implements java.io.Serializable {
-  List fields = new Vector();
+  List fields = new Vector(); //wangxc 这里直接存到Vector里。
   private float boost = 1.0f;
 
   /** Constructs a new document with no fields. */

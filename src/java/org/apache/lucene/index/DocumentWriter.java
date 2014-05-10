@@ -59,7 +59,7 @@ final class DocumentWriter {
     // write field names
     fieldInfos = new FieldInfos();
     fieldInfos.add(doc);
-    fieldInfos.write(directory, segment + ".fnm");
+    fieldInfos.write(directory, segment + ".fnm");  //wangxc 是直接用了KeyValue的数据方式？ 用一个Key后面带着几个Value， 不过，存这个名字有什么用？
 
     // write field values
     FieldsWriter fieldsWriter =
@@ -114,7 +114,7 @@ final class DocumentWriter {
   // Tokenizes the fields of a document into Postings.
   private final void invertDocument(Document doc)
           throws IOException {
-    Enumeration fields = doc.fields();
+    Enumeration fields = doc.fields(); //wangxc 可考虑先实现这个核心功能 ， 别的跟个数相关的信息先不考虑实现。
     while (fields.hasMoreElements()) {
       Field field = (Field) fields.nextElement();
       String fieldName = field.name();

@@ -19,7 +19,7 @@ package org.apache.lucene.index;
 final class FieldInfo {
   String name;
   boolean isIndexed;
-  int number;
+  int number;//wangxc 这个具体指什么的Number？
 
   // true if term vector for this field should be stored
   boolean storeTermVector;

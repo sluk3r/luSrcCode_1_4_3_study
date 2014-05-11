@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.908" errors="0" skipped="0" tests="1" name="org.apache.lucene.TestDemo">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.6.0_26\jre\bin"/>
+    <property name="java.vm.version" value="20.1-b02"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="path.separator" value=";"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="CN"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="Service Pack 1"/>
+    <property name="test" value="TestDemo"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="D:\gitHub\luSrcCode_1_4_3_study"/>
+    <property name="java.runtime.version" value="1.6.0_26-b03"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="basedir" value="D:\gitHub\luSrcCode_1_4_3_study"/>
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.6.0_26\jre\lib\endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="surefire.real.class.path" value="D:\gitHub\luSrcCode_1_4_3_study\target\surefire\surefirebooter8343765131518735808.jar"/>
+    <property name="java.io.tmpdir" value="C:\Users\wangxc\AppData\Local\Temp\"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.variant" value=""/>
+    <property name="os.name" value="Windows 7"/>
+    <property name="sun.jnu.encoding" value="GBK"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk1.6.0_26\jre\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Users\wangxc\AppData\Local\GitHub\PortableGit_054f2e797ebafd44a30203088cd3d58663c627ef\cmd;C:\Users\wangxc\AppData\Local\GitHub\PortableGit_054f2e797ebafd44a30203088cd3d58663c627ef\bin;C:\Users\wangxc\AppData\Local\Apps\2.0\76PGLC79.95O\D401EY5P.RCA\gith..tion_317444273a93ac29_0001.0003_e68db37a99107794;C:\windows\Microsoft.NET\Framework\v4.0.30319;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\NetSarang;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Lenovo\Bluetooth Software\;C:\Program Files\Lenovo\Bluetooth Software\syswow64;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\apache-ant-1.8.2\bin\;C:\Program Files\Java\jdk1.6.0_26\bin;C:\Program Files (x86)\cvsnt;G:\software\java\apache-maven-3.0.3\bin\;C:\cygwin\bin\;G:\software\vim73\vim73\;C:\Program Files (x86)\EditPlus 2\;C:\Program Files\emacs-23.3\bin;C:\Python27;C:\PROGRA~2\CVSNT;C:\Program Files (x86)\CVSNT;G:\Program Files\mysql-5.5.28-winx64\bin;C:\Python27\Scripts;C:\Program Files\TortoiseSVN\bin;."/>
+    <property name="surefire.test.class.path" value="D:\gitHub\luSrcCode_1_4_3_study\target\test-classes;D:\gitHub\luSrcCode_1_4_3_study\target\classes;G:\mavenRepository\.m2\repository\commons-logging\commons-logging\1.1.1\commons-logging-1.1.1.jar;G:\mavenRepository\.m2\repository\junit\junit\4.11\junit-4.11.jar;G:\mavenRepository\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="6.1"/>
+    <property name="user.home" value="C:\Users\wangxc"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="file.encoding" value="GBK"/>
+    <property name="user.name" value="wangxc"/>
+    <property name="java.class.path" value="D:\gitHub\luSrcCode_1_4_3_study\target\test-classes;D:\gitHub\luSrcCode_1_4_3_study\target\classes;G:\mavenRepository\.m2\repository\commons-logging\commons-logging\1.1.1\commons-logging-1.1.1.jar;G:\mavenRepository\.m2\repository\junit\junit\4.11\junit-4.11.jar;G:\mavenRepository\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk1.6.0_26\jre"/>
+    <property name="sun.java.command" value="D:\gitHub\luSrcCode_1_4_3_study\target\surefire\surefirebooter8343765131518735808.jar D:\gitHub\luSrcCode_1_4_3_study\target\surefire\surefire2517504300946495629tmp D:\gitHub\luSrcCode_1_4_3_study\target\surefire\surefire8694550442097926442tmp"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.language" value="zh"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.6.0_26"/>
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.6.0_26\jre\lib\ext;C:\windows\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.6.0_26\jre\lib\resources.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\rt.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\jce.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.6.0_26\jre\lib\modules\jdk.boot.jar;C:\Program Files\Java\jdk1.6.0_26\jre\classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="localRepository" value="G:\mavenRepository\.m2\repository"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+  </properties>
+  <testcase time="0.702" classname="org.apache.lucene.TestDemo" name="testDemo"/>
+</testsuite>

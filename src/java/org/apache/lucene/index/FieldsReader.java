@@ -37,7 +37,7 @@ final class FieldsReader {
     private int size;
 
     FieldsReader(Directory d, String segment, FieldInfos fn) throws IOException {
-        fieldInfos = fn;
+        fieldInfos = fn;//wangxc 这个fn是从哪传来的？
 
         fieldsStream = d.openFile(segment + ".fdt");
         indexStream = d.openFile(segment + ".fdx");
@@ -65,10 +65,10 @@ final class FieldsReader {
             int fieldNumber = fieldsStream.readVInt();
             FieldInfo fi = fieldInfos.fieldInfo(fieldNumber);
 
-            byte bits = fieldsStream.readByte();
+            byte bits = fieldsStream.readByte(); //wangxc 这个值是个啥？
 
             doc.add(new Field(fi.name,          // name
-                    fieldsStream.readString(), // read value
+                    fieldsStream.readString(), // read value   //wangxc， 如果不Store时， 这个值会是什么样子？ 还能读出来原始值？
                     true,              // stored
                     fi.isIndexed,          // indexed
                     (bits & 1) != 0, fi.storeTermVector)); // vector   //wangxc     这是要直接还原成建索引时的情况。

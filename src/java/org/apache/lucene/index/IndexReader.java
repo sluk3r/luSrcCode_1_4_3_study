@@ -115,7 +115,7 @@ public abstract class IndexReader {
 
     private static IndexReader open(final Directory directory, final boolean closeDirectory) throws IOException {
         synchronized (directory) {              // in- & inter-process sync
-            return (IndexReader) new Lock.With(
+            return (IndexReader) new Lock.With( //wangxc 这种方式也是第一次见。 有点像Python的那种with写法。
                     directory.makeLock(IndexWriter.COMMIT_LOCK_NAME),
                     IndexWriter.COMMIT_LOCK_TIMEOUT) {
                 public Object doBody() throws IOException {

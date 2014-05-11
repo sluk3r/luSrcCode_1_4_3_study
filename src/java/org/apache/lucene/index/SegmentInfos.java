@@ -45,22 +45,22 @@ final class SegmentInfos extends Vector {           //wangxc 直接让业务类�
             int format = input.readInt();
             if (format < 0) {     // file contains explicit format info
                 // check that it is a format we can understand
-                if (format < FORMAT)
+                if (format < FORMAT) //wangxc 这FORMAT是什么意思？
                     throw new IOException("Unknown format version: " + format);
                 version = input.readLong(); // read version
-                counter = input.readInt(); // read counter
+                counter = input.readInt(); // read counter //wangxc 这个counter记得什么的个数？
             } else {     // file is in old format without explicit format info
-                counter = format;
+                counter = format; //wangxc 把format直接当counter？
             }
 
             for (int i = input.readInt(); i > 0; i--) { // read segmentInfos
                 SegmentInfo si =
-                        new SegmentInfo(input.readString(), input.readInt(), directory);
+                        new SegmentInfo(input.readString(), input.readInt(), directory); //wangxc 如果自己实现， 底层这些数据格式是个大问题。  可以自己先定义一个简单的格式，以后再朝这个目标改进。
                 addElement(si);
             }
 
             if (format >= 0) {    // in old format the version number may be at the end of the file
-                if (input.getFilePointer() >= input.length())
+                if (input.getFilePointer() >= input.length())   //wangxc 能不能再独立一层出来？缺点是会有性能方面的不足。可以这样， 把这些数据写到数据库， 自己看着也方便。
                     version = 0; // old file format without version number
                 else
                     version = input.readLong(); // read version
